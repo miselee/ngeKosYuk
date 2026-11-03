@@ -7,7 +7,7 @@ use App\Http\Controllers\AuthController;
 Route::redirect('/', '/login');
 
 // Login
-Route::get('/login', [AuthController::class, 'showLogin']);
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 
 // Logout
@@ -42,4 +42,13 @@ Route::get('/penyewa/dashboard', function () {
     }
 
     return view('penyewa.dashboard');
+})->middleware('auth');
+
+// Cari koss
+Route::get('/penyewa/cari-kos', function () {
+    if (Auth::user()->role != 'penyewa') {
+        abort(403);
+    }
+
+    return view('penyewa.cari-kos');
 })->middleware('auth');
