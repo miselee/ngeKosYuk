@@ -189,10 +189,7 @@
                     <a class="nav-link" href="{{ url('/') }}">Beranda</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Cari Kos</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Daftar Kos</a>
+                    <a class="nav-link" href="{{ url('/penyewa/cari-kos') }}">Cari Kos</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Riwayat Sewa</a>
@@ -215,7 +212,6 @@
 <section class="hero">
     <div>
         <h1>Cari Kosan<br>Impianmu Di Sini</h1>
-
         <form action="#" method="GET" class="search-box">
             <input type="text" name="search" placeholder="Cari lokasi atau nama kos...">
             <button type="submit">
@@ -225,97 +221,80 @@
     </div>
 </section>
 
+
 <section class="recommendation">
     <h2 class="section-title">Rekomendasi Kos</h2>
-
     <div class="row g-4">
-
-        @php
-            $kosList = [
-                [
-                    'nama' => 'Asrama Melati 2',
-                    'foto' => 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600',
-                    'rating' => '4.7',
-                    'tipe' => 'Putri',
-                    'class' => 'putri',
-                    'tahun' => '7.000.000',
-                    'bulan' => '800.000',
-                    'alamat' => 'Jl. Pulau Morotai No. 68, Jagabaya III, Way Halim, Bandar Lampung'
-                ],
-                [
-                    'nama' => 'Asrama Apadeh',
-                    'foto' => 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600',
-                    'rating' => '4.7',
-                    'tipe' => 'Putra',
-                    'class' => 'putra',
-                    'tahun' => '7.000.000',
-                    'bulan' => '800.000',
-                    'alamat' => 'Jl. Pulau Morotai No. 68, Jagabaya III, Way Halim, Bandar Lampung'
-                ],
-                [
-                    'nama' => 'Asrama Apadeh',
-                    'foto' => 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=600',
-                    'rating' => '4.7',
-                    'tipe' => 'Campur',
-                    'class' => 'campur',
-                    'tahun' => '7.000.000',
-                    'bulan' => '700.000',
-                    'alamat' => 'Jl. Pulau Morotai No. 68, Jagabaya III, Way Halim, Bandar Lampung'
-                ],
-                [
-                    'nama' => 'Asrama Hijau',
-                    'foto' => 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=600',
-                    'rating' => '4.7',
-                    'tipe' => 'Putra',
-                    'class' => 'putra',
-                    'tahun' => '7.000.000',
-                    'bulan' => '800.000',
-                    'alamat' => 'Jl. Pulau Morotai No. 68, Jagabaya III, Way Halim, Bandar Lampung'
-                ],
-            ];
-        @endphp
-
-        @foreach($kosList as $kos)
-        <div class="col-12 col-sm-6 col-lg-3">
-            <div class="kos-card">
-                <div class="position-relative">
-                    <img src="{{ $kos['foto'] }}" class="kos-image" alt="{{ $kos['nama'] }}">
-
-                    <span class="rating">
-                        <i class="bi bi-star"></i> {{ $kos['rating'] }}
-                    </span>
-
-                    <span class="favorite">
-                        <i class="bi bi-heart-fill"></i>
-                    </span>
-                </div>
-
-                <div class="kos-info">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="kos-name">{{ $kos['nama'] }}</span>
-                        <span class="kos-type {{ $kos['class'] }}">{{ $kos['tipe'] }}</span>
+        @forelse(($kos ?? collect()) as $item)
+            <div class="col-12 col-sm-6 col-lg-3">
+                <div class="kos-card">
+                    <div class="position-relative">
+                        @if($item->foto)
+                            <img src="{{ asset('storage/' . $item->foto) }}"
+                                 class="kos-image"
+                                 alt="{{ $item->nama_kos }}">
+                        @else
+                            <div class="kos-image bg-light d-flex
+                                        justify-content-center align-items-center">
+                                <i class="bi bi-house fs-1 text-secondary"></i>
+                            </div>
+                        @endif
+                        <span class="favorite">
+                            <i class="bi bi-heart-fill"></i>
+                        </span>
                     </div>
 
-                    <div class="price">
-                        Rp {{ $kos['tahun'] }}
-                        <small class="badge rounded-pill bg-info-subtle text-info">Tahunan</small>
-                    </div>
-
-                    <div class="price-month">
-                        Rp {{ $kos['bulan'] }}
-                        <small class="badge rounded-pill bg-success-subtle text-success">Bulanan</small>
-                    </div>
-
-                    <div class="location">
-                        <i class="bi bi-geo-alt-fill"></i>
-                        {{ $kos['alamat'] }}
+                    <div class="kos-info">
+                        <div class="d-flex justify-content-between
+                                    align-items-center mb-2">
+                            <span class="kos-name">
+                                {{ $item->nama_kos }}
+                            </span>
+                            <span class="kos-type
+                                {{ strtolower($item->tipe_kos) === 'putri' ? 'putri' : (strtolower($item->tipe_kos) === 'putra' ? 'putra' : 'campur') }}">
+                                {{ ucfirst($item->tipe_kos) }}
+                            </span>
+                        </div>
+                        <div class="location">
+                            <i class="bi bi-geo-alt-fill"></i>
+                            {{ $item->alamat }}
+                        </div>
+                        <a href="{{ url('/penyewa/detail-kos/' . $item->id) }}"
+                           class="btn btn-primary btn-sm w-100 mt-3">
+                            Lihat Detail
+                        </a>
                     </div>
                 </div>
             </div>
-        </div>
-        @endforeach
+
+        @empty
+
+            <div class="col-12">
+                <div class="text-center py-5"
+                     style="border: 1px dashed #b8d1f5;
+                            border-radius: 12px;
+                            background: #fafdff;">
+                    <i class="bi bi-house-x"
+                       style="font-size: 55px; color: #8aaedb;"></i>
+
+                    <h4 class="fw-bold mt-3"
+                        style="color: #2674c9;">
+                        Belum Ada Kos Tersedia
+                    </h4>
+
+                    <p class="text-secondary mb-0">
+                        Saat ini belum ada kos yang terdaftar.
+                        Silakan cek kembali nanti setelah pemilik
+                        menambahkan kos.
+                    </p>
+                </div>
+            </div>
+
+        @endforelse
 
     </div>
+
 </section>
+
 
 @endsection
