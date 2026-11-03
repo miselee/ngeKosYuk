@@ -1,192 +1,268 @@
 
 @extends('layouts.app')
 
-@section('title', 'Beranda - ngeKosYuk')
-
 @section('content')
 
 <style>
-    body {
-        background: #fff;
-        font-family: Arial, sans-serif;
-        color: #263747;
+    :root {
+        --primary-blue: #2696D2;
+        --dark-blue: #2468B8;
+        --light-blue: #EAF4FF;
+        --text-dark: #263747;
     }
 
-    
-    .navbar-home {
+    body {
         background: #fff;
-        padding: 15px 5%;
-        box-shadow: 0 2px 8px rgba(0,0,0,.05);
+        color: var(--text-dark);
+    }
+
+    .navbar {
+        background: white;
+        padding: 16px 5%;
+        box-shadow: 0 2px 10px rgba(0,0,0,.05);
     }
 
     .navbar-brand {
-        color: #2674c9 !important;
+        color: var(--dark-blue) !important;
+        font-weight: 700;
         font-size: 21px;
-        font-weight: 600;
     }
 
-    .navbar-home .nav-link {
-        color: #2165bd;
-        font-size: 17px;
+    .navbar .nav-link {
+        color: #2468B8;
         margin-left: 15px;
-    }
-
-    .navbar-home .nav-link:hover {
-        color: #123e7c;
-    }
-
-    
-    .hero {
-        height: 440px;
-        background:
-            linear-gradient(rgba(0,0,0,.25), rgba(0,0,0,.25)),
-            url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600')
-            center/cover no-repeat;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-    }
-
-    .hero h1 {
-        color: white;
-        font-size: 48px;
-        font-weight: 700;
-        text-shadow: 0 3px 8px rgba(0,0,0,.3);
-        margin-bottom: 35px;
-    }
-
-    .search-box {
-        max-width: 420px;
-        margin: auto;
-        display: flex;
-        background: white;
-        border: 1px solid #2674c9;
-        border-radius: 8px;
-        overflow: hidden;
-    }
-
-    .search-box input {
-        border: none;
-        padding: 12px 15px;
-        outline: none;
-        flex: 1;
-    }
-
-    .search-box button {
-        border: none;
-        background: white;
-        padding: 0 15px;
-        color: #2674c9;
-    }
-
-    .recommendation {
-        padding: 48px 3%;
-    }
-
-    .section-title {
-        color: #2674c9;
-        font-size: 28px;
-        font-weight: 700;
-        margin-bottom: 18px;
-    }
-
-    .kos-card {
-        border: 1px solid #3979d2;
-        border-radius: 9px;
-        overflow: hidden;
-        height: 100%;
-        transition: .2s;
-    }
-
-    .kos-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 5px 15px rgba(0,0,0,.1);
-    }
-
-    .kos-image {
-        height: 215px;
-        width: 100%;
-        object-fit: cover;
-    }
-
-    .kos-info {
-        padding: 12px 14px 18px;
-    }
-
-    .kos-name {
-        font-size: 19px;
-        font-weight: 600;
-        color: #222;
-    }
-
-    .rating {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        background: #fff5a8;
-        color: #2674c9;
-        border-radius: 8px;
-        padding: 3px 9px;
-    }
-
-    .kos-type {
-        font-size: 12px;
-        padding: 4px 12px;
-        border-radius: 15px;
-        color: white;
-    }
-
-    .putri { background: #2674c9; }
-    .putra { background: #f28b20; }
-    .campur { background: #20b83c; }
-
-    .price {
-        color: #2674c9;
-        font-size: 19px;
         font-weight: 500;
     }
 
-    .price-month {
-        color: #16852d;
-        font-size: 14px;
+    .navbar .nav-link:hover {
+        color: var(--primary-blue);
     }
 
-    .location {
-        color: #6c6262;
-        font-size: 12px;
-        margin-top: 8px;
+    .hero {
+        min-height: 390px;
+        display: flex;
+        align-items: center;
+        padding: 60px 6%;
+        background:
+            linear-gradient(90deg, rgba(200,244,255,.95), rgba(200,244,255,.35)),
+            url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1600')
+            center/cover;
     }
 
-    .favorite {
-        position: absolute;
-        bottom: 12px;
-        left: 14px;
+    .hero-content {
+        max-width: 520px;
+    }
+
+    .hero h1 {
+        color: #2468B8;
+        font-size: 42px;
+        font-weight: 800;
+        margin-bottom: 20px;
+        text-shadow: 1px 2px 3px rgba(0,0,0,.15);
+    }
+
+    .hero p {
+        font-size: 20px;
+        color: #172B3A;
+        margin-bottom: 25px;
+    }
+
+    .btn-primary-custom {
+        background: var(--dark-blue);
         color: white;
-        font-size: 23px;
-        cursor: pointer;
-        text-shadow: 0 2px 5px #555;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-block;
+        font-weight: 600;
     }
 
-    @media(max-width: 768px) {
-        .hero h1 { font-size: 32px; }
-        .navbar-home .nav-link { margin-left: 0; }
+    .btn-primary-custom:hover {
+        background: var(--primary-blue);
+        color: white;
+    }
+
+    .section-title {
+        color: var(--dark-blue);
+        font-weight: 800;
+        margin-bottom: 30px;
+    }
+
+    .recommendation-section {
+        padding: 65px 6%;
+    }
+
+    .kos-card {
+        border: 1px solid #e5eaf0;
+        border-radius: 13px;
+        overflow: hidden;
+        height: 100%;
+        transition: .25s;
+        background: white;
+    }
+
+    .kos-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 22px rgba(0,0,0,.09);
+    }
+
+    .kos-image {
+        width: 100%;
+        height: 190px;
+        object-fit: cover;
+    }
+
+    .kos-card-body {
+        padding: 17px;
+    }
+
+    .kos-name {
+        color: var(--text-dark);
+        font-weight: 700;
+        font-size: 17px;
+    }
+
+    .kos-address {
+        color: #777;
+        font-size: 13px;
+        margin: 8px 0;
+    }
+
+    .kos-type {
+        display: inline-block;
+        background: var(--light-blue);
+        color: var(--dark-blue);
+        border-radius: 20px;
+        padding: 5px 12px;
+        font-size: 12px;
+    }
+
+    .about-section {
+        padding: 55px 6%;
+    }
+
+    .about-description {
+        font-size: 16px;
+        line-height: 1.6;
+    }
+
+    .about-highlight {
+        background: var(--light-blue);
+        border-radius: 15px;
+        padding: 22px;
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        margin-top: 20px;
+    }
+
+    .about-highlight i {
+        font-size: 48px;
+        color: var(--dark-blue);
+    }
+
+    .about-image {
+        width: 100%;
+        max-height: 300px;
+        object-fit: contain;
+    }
+
+    .values-section {
+        padding: 60px 6%;
+    }
+
+    .value-card {
+        border: 1px solid #cbdcf3;
+        border-radius: 15px;
+        padding: 28px 15px;
+        text-align: center;
+        height: 100%;
+        color: var(--dark-blue);
+    }
+
+    .value-card i {
+        font-size: 42px;
+        margin-bottom: 15px;
+    }
+
+    .value-card h6 {
+        font-size: 17px;
+        margin: 0;
+    }
+
+    .vision-section {
+        padding: 45px 6% 80px;
+    }
+
+    .vision-card {
+        border: 1px solid #cbdcf3;
+        border-radius: 15px;
+        padding: 30px;
+        height: 100%;
+        text-align: center;
+    }
+
+    .vision-card h4 {
+        color: var(--dark-blue);
+        font-weight: 800;
+        margin-bottom: 18px;
+    }
+
+    .vision-card p,
+    .vision-card li {
+        font-size: 16px;
+        line-height: 1.5;
+    }
+
+    .vision-card ol {
+        text-align: center;
+        padding-left: 25px;
+    }
+
+    .footer {
+        background: #2468B8;
+        color: white;
+        padding: 25px 6%;
+        text-align: center;
+    }
+
+    @media (max-width: 768px) {
+        .hero {
+            min-height: 350px;
+            padding: 40px 7%;
+        }
+
+        .hero h1 {
+            font-size: 32px;
+        }
+
+        .hero p {
+            font-size: 17px;
+        }
+
+        .navbar .nav-link {
+            margin-left: 0;
+        }
     }
 </style>
 
-<nav class="navbar navbar-expand-lg navbar-home">
+
+<nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{{ url('/') }}">NgeKosYuk</a>
+        <a class="navbar-brand" href="{{ url('/penyewa/dashboard') }}">
+            NgeKosYuk
+        </a>
 
         <button class="navbar-toggler" type="button"
-            data-bs-toggle="collapse" data-bs-target="#navbarMenu">
+            data-bs-toggle="collapse" data-bs-target="#navbarPenyewa">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbarMenu">
+        <div class="collapse navbar-collapse" id="navbarPenyewa">
             <ul class="navbar-nav ms-auto align-items-lg-center">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/') }}">Beranda</a>
+                    <a class="nav-link" href="{{ url('/penyewa/dashboard') }}">Beranda</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url('/penyewa/cari-kos') }}">Cari Kos</a>
@@ -200,8 +276,9 @@
                 <li class="nav-item">
                     <form action="{{ url('/logout') }}" method="POST">
                         @csrf
-                        <button class="nav-link border-0 bg-transparent"
-                            type="submit">Log Out</button>
+                        <button type="submit" class="nav-link border-0 bg-transparent">
+                            Log Out
+                        </button>
                     </form>
                 </li>
             </ul>
@@ -210,91 +287,217 @@
 </nav>
 
 <section class="hero">
-    <div>
-        <h1>Cari Kosan<br>Impianmu Di Sini</h1>
-        <form action="#" method="GET" class="search-box">
-            <input type="text" name="search" placeholder="Cari lokasi atau nama kos...">
-            <button type="submit">
-                <i class="bi bi-search fs-5"></i>
-            </button>
-        </form>
+    <div class="hero-content">
+        <h1>Selamat Datang di ngeKosYuk</h1>
+
+        <p>
+            Kami hadir untuk memudahkan kamu menemukan kos
+            yang nyaman, aman, dan sesuai dengan kebutuhanmu.
+        </p>
+
+        <a href="{{ url('/penyewa/cari-kos') }}"
+            class="btn-primary-custom">
+            Cari Kos Sekarang
+        </a>
+    </div>
+</section>
+
+<section class="recommendation-section">
+    <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="section-title mb-2">Rekomendasi Kos</h2>
+                <p class="text-muted mb-0">
+                    Temukan tempat tinggal yang nyaman untukmu.
+                </p>
+            </div>
+
+            <a href="{{ url('/penyewa/cari-kos') }}"
+                class="text-decoration-none fw-semibold">
+                Lihat Semua <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="row g-4">
+            @forelse(($kos ?? collect()) as $item)
+                <div class="col-md-6 col-lg-3">
+                    <div class="kos-card">
+                        <img
+                            src="{{ $item->foto ?? 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=700' }}"
+                            class="kos-image"
+                            alt="Foto Kos">
+
+                        <div class="kos-card-body">
+                            <span class="kos-type">
+                                {{ $item->tipe_kos ?? 'Tipe kos' }}
+                            </span>
+
+                            <h5 class="kos-name mt-3">
+                                {{ $item->nama_kos ?? 'Nama Kos' }}
+                            </h5>
+
+                            <p class="kos-address">
+                                <i class="bi bi-geo-alt"></i>
+                                {{ $item->alamat ?? 'Alamat belum tersedia' }}
+                            </p>
+
+                            <a href="{{ url('/penyewa/detail-kos/' . $item->id) }}"
+                                class="btn-primary-custom w-100 text-center">
+                                Lihat Detail
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="col-12">
+                    <div class="text-center py-5 bg-light rounded-4">
+                        <i class="bi bi-house-door"
+                            style="font-size: 48px; color: #2696D2;"></i>
+
+                        <h5 class="mt-3 fw-bold">
+                            Belum Ada Kos Tersedia
+                        </h5>
+
+                        <p class="text-muted">
+                            Kos yang tersedia akan ditampilkan di sini.
+                        </p>
+                    </div>
+                </div>
+            @endforelse
+        </div>
     </div>
 </section>
 
 
-<section class="recommendation">
-    <h2 class="section-title">Rekomendasi Kos</h2>
-    <div class="row g-4">
-        @forelse(($kos ?? collect()) as $item)
-            <div class="col-12 col-sm-6 col-lg-3">
-                <div class="kos-card">
-                    <div class="position-relative">
-                        @if($item->foto)
-                            <img src="{{ asset('storage/' . $item->foto) }}"
-                                 class="kos-image"
-                                 alt="{{ $item->nama_kos }}">
-                        @else
-                            <div class="kos-image bg-light d-flex
-                                        justify-content-center align-items-center">
-                                <i class="bi bi-house fs-1 text-secondary"></i>
-                            </div>
-                        @endif
-                        <span class="favorite">
-                            <i class="bi bi-heart-fill"></i>
-                        </span>
-                    </div>
+<section class="about-section">
+    <div class="container-fluid">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-8">
+                <h2 class="section-title mb-3">Siapa Kami?</h2>
 
-                    <div class="kos-info">
-                        <div class="d-flex justify-content-between
-                                    align-items-center mb-2">
-                            <span class="kos-name">
-                                {{ $item->nama_kos }}
-                            </span>
-                            <span class="kos-type
-                                {{ strtolower($item->tipe_kos) === 'putri' ? 'putri' : (strtolower($item->tipe_kos) === 'putra' ? 'putra' : 'campur') }}">
-                                {{ ucfirst($item->tipe_kos) }}
-                            </span>
-                        </div>
-                        <div class="location">
-                            <i class="bi bi-geo-alt-fill"></i>
-                            {{ $item->alamat }}
-                        </div>
-                        <a href="{{ url('/penyewa/detail-kos/' . $item->id) }}"
-                           class="btn btn-primary btn-sm w-100 mt-3">
-                            Lihat Detail
-                        </a>
+                <p class="about-description">
+                    ngeKosYuk adalah platform sistem informasi sewa kos
+                    yang dirancang untuk menghubungkan penyewa dengan
+                    pemilik kos secara mudah, aman, dan transparan.
+                    Kami percaya bahwa mencari tempat tinggal bukan
+                    sekadar mencari kamar, tetapi juga menemukan
+                    kenyamanan dan rasa aman untuk beraktivitas
+                    dan berkembang.
+                </p>
+
+                <div class="about-highlight">
+                    <i class="bi bi-house-heart-fill"></i>
+
+                    <div>
+                        <h5 class="fw-bold"
+                            style="color: #2468B8;">
+                            Lebih dari sekadar kos
+                        </h5>
+
+                        <p class="mb-0">
+                            ngeKosYuk bukan hanya tempat untuk mencari kos,
+                            tetapi juga solusi untuk kehidupan yang lebih baik.
+                        </p>
                     </div>
                 </div>
             </div>
 
-        @empty
+            <div class="col-lg-4 text-center">
+                <img
+                    src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=700"
+                    class="about-image"
+                    alt="Ilustrasi Rumah">
+            </div>
+        </div>
+    </div>
+</section>
 
-            <div class="col-12">
-                <div class="text-center py-5"
-                     style="border: 1px dashed #b8d1f5;
-                            border-radius: 12px;
-                            background: #fafdff;">
-                    <i class="bi bi-house-x"
-                       style="font-size: 55px; color: #8aaedb;"></i>
+<section class="values-section">
+    <div class="container">
+        <h2 class="section-title text-center mb-5">
+            Nilai Kami
+        </h2>
 
-                    <h4 class="fw-bold mt-3"
-                        style="color: #2674c9;">
-                        Belum Ada Kos Tersedia
-                    </h4>
+        <div class="row g-4 justify-content-center">
+            <div class="col-6 col-md-3">
+                <div class="value-card">
+                    <i class="bi bi-people-fill"></i>
+                    <h6>Peduli<br>Pengguna</h6>
+                </div>
+            </div>
 
-                    <p class="text-secondary mb-0">
-                        Saat ini belum ada kos yang terdaftar.
-                        Silakan cek kembali nanti setelah pemilik
-                        menambahkan kos.
+            <div class="col-6 col-md-3">
+                <div class="value-card">
+                    <i class="bi bi-shield-fill-check"></i>
+                    <h6>Aman &<br>Terpercaya</h6>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-3">
+                <div class="value-card">
+                    <i class="bi bi-hand-thumbs-up-fill"></i>
+                    <h6>Mudah<br>Digunakan</h6>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-3">
+                <div class="value-card">
+                    <i class="bi bi-eye-fill"></i>
+                    <h6>Transparan</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="vision-section">
+    <div class="container">
+        <h2 class="section-title text-center mb-5">
+            Visi & Misi
+        </h2>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="vision-card">
+                    <h4>Visi</h4>
+
+                    <p>
+                        Menjadi platform sewa kos terpercaya dan terdepan
+                        di Indonesia yang memberikan kemudahan, kenyamanan,
+                        dan keamanan bagi seluruh penggunanya.
                     </p>
                 </div>
             </div>
 
-        @endforelse
+            <div class="col-md-6">
+                <div class="vision-card">
+                    <h4>Misi</h4>
 
+                    <ol>
+                        <li>
+                            Mempermudah pencarian kos dengan informasi
+                            yang lengkap dan akurat.
+                        </li>
+                        <li>
+                            Membangun koneksi yang baik antara penyewa
+                            dan pemilik kos.
+                        </li>
+                        <li>
+                            Memberikan pengalaman sewa kos yang aman,
+                            nyaman, dan transparan.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
     </div>
-
 </section>
 
+
+<footer class="footer">
+    <small>
+        &copy; {{ date('Y') }} ngeKosYuk. All Rights Reserved.
+    </small>
+</footer>
 
 @endsection
