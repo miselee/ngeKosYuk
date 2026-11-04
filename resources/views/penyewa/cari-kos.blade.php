@@ -5,6 +5,8 @@
 
 @section('content')
 
+@include('penyewa.partials.navbar')
+
 <style>
     .search-page {
         padding: 30px 24px;
@@ -183,33 +185,6 @@
         }
     }
 </style>
-
-<nav class="search-navbar">
-
-    <a href="{{ url('/penyewa/dashboard') }}" class="brand">
-        NgeKosYuk
-    </a>
-
-    <div>
-        <a href="{{ url('/penyewa/dashboard') }}">Beranda</a>
-        <a href="{{ url('/penyewa/cari-kos') }}">Cari Kos</a>
-        <a href="#">Riwayat Sewa</a>
-        <a href="#">Riwayat Pembayaran</a>
-
-        <form action="{{ url('/logout') }}"
-              method="POST"
-              style="display:inline;">
-            @csrf
-
-            <button type="submit"
-                    class="btn btn-link text-primary text-decoration-none"
-                    style="font-size:18px;">
-                Log Out
-            </button>
-        </form>
-    </div>
-
-</nav>
 
 <div class="search-page">
     <div class="row g-4">

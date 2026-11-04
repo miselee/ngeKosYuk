@@ -3,6 +3,8 @@
 
 @section('content')
 
+@include('penyewa.partials.navbar')
+
 <style>
     :root {
         --primary-blue: #2696D2;
@@ -15,29 +17,7 @@
         background: #fff;
         color: var(--text-dark);
     }
-
-    .navbar {
-        background: white;
-        padding: 16px 5%;
-        box-shadow: 0 2px 10px rgba(0,0,0,.05);
-    }
-
-    .navbar-brand {
-        color: var(--dark-blue) !important;
-        font-weight: 700;
-        font-size: 21px;
-    }
-
-    .navbar .nav-link {
-        color: #2468B8;
-        margin-left: 15px;
-        font-weight: 500;
-    }
-
-    .navbar .nav-link:hover {
-        color: var(--primary-blue);
-    }
-
+    
     .hero {
         min-height: 390px;
         display: flex;
@@ -246,45 +226,6 @@
         }
     }
 </style>
-
-
-<nav class="navbar navbar-expand-lg">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="{{ url('/penyewa/dashboard') }}">
-            NgeKosYuk
-        </a>
-
-        <button class="navbar-toggler" type="button"
-            data-bs-toggle="collapse" data-bs-target="#navbarPenyewa">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarPenyewa">
-            <ul class="navbar-nav ms-auto align-items-lg-center">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/penyewa/dashboard') }}">Beranda</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/penyewa/cari-kos') }}">Cari Kos</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Riwayat Sewa</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Riwayat Pembayaran</a>
-                </li>
-                <li class="nav-item">
-                    <form action="{{ url('/logout') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="nav-link border-0 bg-transparent">
-                            Log Out
-                        </button>
-                    </form>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
 
 <section class="hero">
     <div class="hero-content">
