@@ -5,6 +5,8 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -47,5 +49,45 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Daftar kos yang dimiliki (untuk pemilik).
+     */
+    public function kosYangDimiliki(): HasMany
+    {
+        return $this->hasMany(Kos::class);
+    }
+
+    /**
+     * Alias daftar kos yang dimiliki (untuk pemilik).
+     */
+    public function kos(): HasMany
+    {
+        return $this->hasMany(Kos::class);
+    }
+
+    /**
+     * Daftar sewa (untuk penyewa).
+     */
+    public function sewas(): HasMany
+    {
+        return $this->hasMany(Sewa::class);
+    }
+
+    /**
+     * Daftar pembayaran melalui sewa (untuk penyewa).
+     */
+    public function pembayarans(): HasManyThrough
+    {
+        return $this->hasManyThrough(Pembayaran::class, Sewa::class);
+    }
+
+    /**
+     * Daftar ulasan (untuk penyewa).
+     */
+    public function ulasans(): HasMany
+    {
+        return $this->hasMany(Ulasan::class);
     }
 }

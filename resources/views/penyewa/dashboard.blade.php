@@ -260,27 +260,36 @@
         </div>
 
         <div class="row g-4">
-            @forelse(($kos ?? collect()) as $item)
+            @forelse(($kos ?? $rekomendasiKos ?? collect()) as $item)
                 <div class="col-md-6 col-lg-3">
                     <div class="kos-card">
                         <img
-                            src="{{ $item->foto ?? 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=700' }}"
+                            src="{{ $item->foto ? (str_starts_with($item->foto, 'http') ? $item->foto : asset('storage/' . $item->foto)) : 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=700' }}"
                             class="kos-image"
-                            alt="Foto Kos">
+                            alt="{{ $item->nama_kos ?? 'Foto Kos' }}">
 
                         <div class="kos-card-body">
                             <span class="kos-type">
-                                {{ $item->tipe_kos ?? 'Tipe kos' }}
+                                {{ ucfirst($item->tipe_kos ?? 'Campur') }}
                             </span>
 
-                            <h5 class="kos-name mt-3">
+                            <h5 class="kos-name mt-3 text-truncate" title="{{ $item->nama_kos }}">
                                 {{ $item->nama_kos ?? 'Nama Kos' }}
                             </h5>
 
-                            <p class="kos-address">
+                            <p class="kos-address text-truncate">
                                 <i class="bi bi-geo-alt"></i>
                                 {{ $item->alamat ?? 'Alamat belum tersedia' }}
                             </p>
+
+                            @php
+                                $minHarga = $item->kamars ? $item->kamars->min('harga_per_bulan') : null;
+                            @endphp
+                            @if($minHarga)
+                                <div class="fw-bold mb-3" style="color:var(--dark-blue); font-size:14px;">
+                                    Mulai Rp {{ number_format($minHarga, 0, ',', '.') }}<small class="text-muted fw-normal">/bln</small>
+                                </div>
+                            @endif
 
                             <a href="{{ url('/penyewa/detail-kos/' . $item->id) }}"
                                 class="btn-primary-custom w-100 text-center">

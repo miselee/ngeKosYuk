@@ -190,168 +190,187 @@
     <div class="row g-4">
         <div class="col-lg-4">
             <div class="filter-box">
-                <form action="#" method="GET">
+                <form action="{{ url('/penyewa/cari-kos') }}" method="GET">
                     <div class="filter-section">
                         <div class="filter-title">
-                            Lokasi:
+                            Lokasi / Nama Kos:
                         </div>
                         <input type="text"
                                name="lokasi"
                                class="filter-input"
-                               placeholder="Cari lokasi...">
+                               value="{{ request('lokasi') }}"
+                               placeholder="Cari lokasi atau nama kos...">
                     </div>
 
                     <div class="filter-section">
-                        <div class="filter-title"> Harga </div>
+                        <div class="filter-title"> Rentang Harga (Rp/bulan) </div>
                         <div class="d-flex align-items-center gap-2">
                             <input type="number"
                                    name="harga_min"
                                    class="filter-input"
-                                   placeholder="Min: 100000">
+                                   value="{{ request('harga_min') }}"
+                                   placeholder="Min">
                             <span>-</span>
                             <input type="number"
                                    name="harga_max"
                                    class="filter-input"
-                                   placeholder="Max: 7000000">
+                                   value="{{ request('harga_max') }}"
+                                   placeholder="Max">
                         </div>
                     </div>
 
                     <div class="filter-section">
                         <div class="filter-title">
-                            Periode:
+                            Tipe Kos (Penghuni):
                         </div>
                         <div class="filter-option">
                             <label>
                                 <input type="radio"
-                                       name="periode"
-                                       value="Tahunan">
-                                Tahunan
-                            </label>
-                            <label class="mb-0">
-                                <input type="radio"
-                                       name="periode"
-                                       value="Bulanan">
-                                Bulanan
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="filter-section">
-                        <div class="filter-title">
-                            Penghuni:
-                        </div>
-                        <div class="filter-option">
-                            <label>
-                                <input type="radio"
-                                       name="penghuni"
-                                       value="Putri">
-                                Putri
+                                       name="tipe_kos"
+                                       value=""
+                                       {{ !request('tipe_kos') ? 'checked' : '' }}>
+                                Semua Tipe
                             </label>
                             <label>
                                 <input type="radio"
-                                       name="penghuni"
-                                       value="Putra">
-                                Putra
+                                       name="tipe_kos"
+                                       value="putri"
+                                       {{ request('tipe_kos') === 'putri' ? 'checked' : '' }}>
+                                Khusus Putri
                             </label>
-
+                            <label>
+                                <input type="radio"
+                                       name="tipe_kos"
+                                       value="putra"
+                                       {{ request('tipe_kos') === 'putra' ? 'checked' : '' }}>
+                                Khusus Putra
+                            </label>
                             <label class="mb-0">
                                 <input type="radio"
-                                       name="penghuni"
-                                       value="Campur">
+                                       name="tipe_kos"
+                                       value="campur"
+                                       {{ request('tipe_kos') === 'campur' ? 'checked' : '' }}>
                                 Campur
                             </label>
                         </div>
                     </div>
 
-
-                    <div class="text-end">
-                        <button type="submit" class="btn-filter">
-                            Terapkan
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn-filter flex-grow-1">
+                            <i class="bi bi-funnel-fill"></i> Terapkan Filter
                         </button>
+                        @if(request()->hasAny(['lokasi', 'harga_min', 'harga_max', 'tipe_kos', 'sort']))
+                            <a href="{{ url('/penyewa/cari-kos') }}" class="btn btn-outline-secondary">
+                                Reset
+                            </a>
+                        @endif
                     </div>
                 </form>
             </div>
         </div>
 
         <div class="col-lg-8">
-            <div class="d-flex justify-content-between
-                        align-items-center flex-wrap gap-3 mb-4">
-
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
                 <h2 class="result-title mb-0">
                     Hasil Pencarian
+                    <small class="text-muted fs-6 fw-normal">({{ ($daftarKos ?? $kos)->total() ?? 0 }} kos)</small>
                 </h2>
-                <select class="form-select"
-                        style="width: 285px; border-color:#4d8be0;">
-                    <option value="rating"> Rating tertinggi </option>
-                    <option value="termurah">Harga terendah</option>
-                    <option value="termahal">Harga tertinggi</option>
-                </select>
+                <form action="{{ url('/penyewa/cari-kos') }}" method="GET" class="d-inline-block">
+                    @if(request('lokasi')) <input type="hidden" name="lokasi" value="{{ request('lokasi') }}"> @endif
+                    @if(request('harga_min')) <input type="hidden" name="harga_min" value="{{ request('harga_min') }}"> @endif
+                    @if(request('harga_max')) <input type="hidden" name="harga_max" value="{{ request('harga_max') }}"> @endif
+                    @if(request('tipe_kos')) <input type="hidden" name="tipe_kos" value="{{ request('tipe_kos') }}"> @endif
+                    <select name="sort" class="form-select" style="width: 220px; border-color:#4d8be0;" onchange="this.form.submit()">
+                        <option value="" {{ !request('sort') ? 'selected' : '' }}>Terbaru</option>
+                        <option value="termurah" {{ request('sort') === 'termurah' ? 'selected' : '' }}>Harga terendah</option>
+                        <option value="termahal" {{ request('sort') === 'termahal' ? 'selected' : '' }}>Harga tertinggi</option>
+                    </select>
+                </form>
             </div>
 
             <div class="row g-4">
-                @forelse(($kos ?? collect()) as $item)
+                @forelse(($kos ?? $daftarKos ?? collect()) as $item)
                     <div class="col-md-6">
                         <div class="kos-card">
                             <div class="kos-image-wrapper">
                                 @if($item->foto)
-                                    <img src="{{ asset('storage/' . $item->foto) }}"
+                                    <img src="{{ str_starts_with($item->foto, 'http') ? $item->foto : asset('storage/' . $item->foto) }}"
                                          class="kos-image"
                                          alt="{{ $item->nama_kos }}">
                                 @else
-                                    <div class="kos-image d-flex
-                                                align-items-center
-                                                justify-content-center
-                                                bg-light">
-                                        <i class="bi bi-house fs-1
-                                                  text-secondary"></i>
+                                    <div class="kos-image d-flex align-items-center justify-content-center bg-light">
+                                        <i class="bi bi-building fs-1 text-secondary opacity-50"></i>
                                     </div>
                                 @endif
                             </div>
 
                             <div class="kos-content">
-                                <div class="d-flex justify-content-between
-                                            align-items-center mb-2">
-                                    <h5 class="kos-name">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="kos-name text-truncate" title="{{ $item->nama_kos }}">
                                         {{ $item->nama_kos }}
                                     </h5>
-                                    <span class="kos-type
-                                        {{ strtolower($item->tipe_kos) === 'putri' ? 'putri' : (strtolower($item->tipe_kos) === 'putra' ? 'putra' : 'campur') }}">
-
+                                    <span class="kos-type {{ strtolower($item->tipe_kos) === 'putri' ? 'putri' : (strtolower($item->tipe_kos) === 'putra' ? 'putra' : 'campur') }}">
                                         {{ ucfirst($item->tipe_kos) }}
                                     </span>
                                 </div>
 
-                                <p class="kos-address">
-                                    <i class="bi bi-geo-alt-fill"></i>
+                                <p class="kos-address text-truncate mb-2">
+                                    <i class="bi bi-geo-alt-fill text-danger"></i>
                                     {{ $item->alamat }}
                                 </p>
+
+                                @php
+                                    $minHarga = $item->kamars->min('harga_per_bulan');
+                                    $sisaKamar = $item->kamars->where('status', 'tersedia')->count();
+                                @endphp
+
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div>
+                                        @if($minHarga)
+                                            <div class="fw-bold" style="color:var(--dark-blue);font-size:15px;">
+                                                Rp {{ number_format($minHarga, 0, ',', '.') }}
+                                                <small class="text-muted fw-normal" style="font-size:12px;">/bln</small>
+                                            </div>
+                                        @endif
+                                        <small class="text-muted" style="font-size:12px;">
+                                            <i class="bi bi-door-open"></i> {{ $sisaKamar }} kamar tersedia
+                                        </small>
+                                    </div>
+
+                                    @if($item->ulasans && $item->ulasans->count() > 0)
+                                        <div class="small fw-bold text-warning">
+                                            <i class="bi bi-star-fill"></i> {{ round($item->ulasans->avg('rating'), 1) }}
+                                            <span class="text-muted fw-normal">({{ $item->ulasans->count() }})</span>
+                                        </div>
+                                    @endif
+                                </div>
+
                                 <a href="{{ url('/penyewa/detail-kos/' . $item->id) }}"
-                                   class="btn btn-primary w-100">
+                                   class="btn btn-primary w-100" style="background:var(--dark-blue); border:none;">
                                     Lihat Detail
                                 </a>
-
                             </div>
                         </div>
                     </div>
-
                 @empty
-
                     <div class="col-12">
                         <div class="empty-state text-center">
                             <i class="bi bi-house-x"></i>
-                            <h4>
-                                Belum Ada Kos Tersedia
-                            </h4>
-                            <p>
-                                Saat ini belum ada kos yang terdaftar.
-                                Silakan cek kembali nanti setelah
-                                pemilik menambahkan kos.
-                            </p>
+                            <h4>Tidak Ada Kos yang Ditemukan</h4>
+                            <p>Coba ubah kata kunci lokasi atau filter rentang harga Anda.</p>
+                            <a href="{{ url('/penyewa/cari-kos') }}" class="btn btn-outline-primary btn-sm mt-2">
+                                Lihat Semua Kos
+                            </a>
                         </div>
                     </div>
-
                 @endforelse
             </div>
+
+            @if(isset($daftarKos) && method_exists($daftarKos, 'links'))
+                <div class="mt-4">
+                    {{ $daftarKos->links() }}
+                </div>
+            @endif
         </div>
     </div>
 </div>

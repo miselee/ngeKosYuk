@@ -23,26 +23,30 @@
             <ul class="navbar-nav ms-auto align-items-lg-center">
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/penyewa/dashboard') }}">
+                    <a class="nav-link {{ request()->is('penyewa/dashboard') ? 'active' : '' }}"
+                       href="{{ url('/penyewa/dashboard') }}">
                         Beranda
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/penyewa/cari-kos') }}">
+                    <a class="nav-link {{ request()->is('penyewa/cari-kos*') || request()->is('penyewa/detail-kos*') ? 'active' : '' }}"
+                       href="{{ url('/penyewa/cari-kos') }}">
                         Cari Kos
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link {{ request()->is('penyewa/riwayat-sewa*') ? 'active' : '' }}"
+                       href="{{ url('/penyewa/riwayat-sewa') }}">
                         Riwayat Sewa
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        Riwayat Pembayaran
+                    <a class="nav-link {{ request()->is('penyewa/pembayaran*') ? 'active' : '' }}"
+                       href="{{ url('/penyewa/pembayaran') }}">
+                        Pembayaran
                     </a>
                 </li>
 
@@ -50,7 +54,7 @@
                     <form action="{{ url('/logout') }}" method="POST">
                         @csrf
                         <button type="submit" class="nav-link border-0 bg-transparent">
-                            Log Out
+                            <i class="bi bi-box-arrow-right"></i> Log Out
                         </button>
                     </form>
                 </li>
@@ -83,5 +87,24 @@
 
     .navbar .nav-link:focus {
         color: #2468B8;
+    }
+
+    .navbar .nav-link.active {
+        color: #2696D2;
+        font-weight: 700;
+        position: relative;
+    }
+
+    @media (min-width: 992px) {
+        .navbar .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 15px;
+            right: 0;
+            height: 2.5px;
+            background: #2696D2;
+            border-radius: 3px;
+        }
     }
 </style>
