@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PenyewaController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/login');
 
@@ -35,20 +36,25 @@ Route::get('/pemilik/dashboard', function () {
     return view('pemilik.dashboard');
 })->middleware('auth');
 
-// Dashboard Penyewa
-Route::get('/penyewa/dashboard', function () {
-    if (Auth::user()->role != 'penyewa') {
-        abort(403);
-    }
+// Penyewa Routes
+Route::middleware(['auth', 'role:penyewa'])->prefix('penyewa')->group(function () {
+    Route::get('/dashboard', [PenyewaController::class, 'dashboard']);
+    Route::get('/cari-kos', [PenyewaController::class, 'cariKos']);
+    Route::get('/detail-kos/{kosId}', [PenyewaController::class, 'detailKos']);
 
-    return view('penyewa.dashboard');
-})->middleware('auth');
+    // Pengajuan Sewa
+    Route::get('/pengajuan-sewa/{kamarId}', [PenyewaController::class, 'formPengajuanSewa']);
+    Route::post('/pengajuan-sewa', [PenyewaController::class, 'ajukanSewa']);
 
-// Cari koss
-Route::get('/penyewa/cari-kos', function () {
-    if (Auth::user()->role != 'penyewa') {
-        abort(403);
-    }
+    // Pembayaran
+    Route::get('/pembayaran', [PenyewaController::class, 'daftarPembayaran']);
+    Route::get('/pembayaran/{sewaId}', [PenyewaController::class, 'formPembayaran']);
+    Route::post('/pembayaran', [PenyewaController::class, 'bayar']);
 
-    return view('penyewa.cari-kos');
-})->middleware('auth');
+    // Riwayat Sewa
+    Route::get('/riwayat-sewa', [PenyewaController::class, 'riwayatSewa']);
+
+    // Ulasan
+    Route::get('/ulasan/{sewaId}', [PenyewaController::class, 'formUlasan']);
+    Route::post('/ulasan', [PenyewaController::class, 'simpanUlasan']);
+});
