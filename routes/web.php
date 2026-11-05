@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KelolaKamarController;
+use App\Http\Controllers\KelolaPembayaranController;
 use App\Http\Controllers\KelolaPenyewaanController;
 use App\Http\Controllers\PemilikController;
 use App\Http\Controllers\PenyewaController;
@@ -48,6 +49,11 @@ Route::middleware(['auth', 'role:pemilik'])->prefix('pemilik')->name('pemilik.')
     Route::patch('/penyewaan/{sewa}/setujui', [KelolaPenyewaanController::class, 'setujui'])->name('penyewaan.setujui');
     Route::patch('/penyewaan/{sewa}/tolak', [KelolaPenyewaanController::class, 'tolak'])->name('penyewaan.tolak');
     Route::patch('/penyewaan/{sewa}/selesai', [KelolaPenyewaanController::class, 'selesai'])->name('penyewaan.selesai');
+
+    // Konfirmasi Pembayaran
+    Route::get('/pembayaran', [KelolaPembayaranController::class, 'index'])->name('pembayaran.index');
+    Route::patch('/pembayaran/{pembayaran}/verifikasi', [KelolaPembayaranController::class, 'verifikasi'])->name('pembayaran.verifikasi');
+    Route::patch('/pembayaran/{pembayaran}/tolak', [KelolaPembayaranController::class, 'tolak'])->name('pembayaran.tolak');
 
     // Quick Store Kos (jika pemilik baru belum punya kos)
     Route::post('/kos/quick-store', [PemilikController::class, 'quickStoreKos'])->name('kos.quick-store');
