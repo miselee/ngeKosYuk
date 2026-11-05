@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Kamar;
 use App\Models\Kos;
+use App\Models\Pembayaran;
 use App\Models\Sewa;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -41,6 +42,10 @@ class PemilikController extends Controller
             ->take(5)
             ->get();
 
+        $pembayaranPendingCount = Pembayaran::whereHas('sewa', function ($q) use ($kosIds) {
+            $q->whereIn('kos_id', $kosIds);
+        })->where('status', 'pending')->count();
+
         return view('pemilik.dashboard', compact(
             'daftarKos',
             'totalKos',
@@ -49,7 +54,8 @@ class PemilikController extends Controller
             'kamarTerisi',
             'kamarTerbaru',
             'sewaPendingCount',
-            'sewaTerbaru'
+            'sewaTerbaru',
+            'pembayaranPendingCount'
         ));
     }
 

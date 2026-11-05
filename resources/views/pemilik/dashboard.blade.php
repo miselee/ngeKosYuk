@@ -142,6 +142,12 @@
                         <span class="badge bg-danger rounded-pill ms-1">{{ $sewaPendingCount }}</span>
                     @endif
                 </a>
+                <a href="{{ route('pemilik.pembayaran.index') }}" class="btn btn-outline-light px-3 py-2 rounded-3 d-flex align-items-center gap-1.5">
+                    <i class="bi bi-credit-card-2-front"></i> Pembayaran
+                    @if(isset($pembayaranPendingCount) && $pembayaranPendingCount > 0)
+                        <span class="badge bg-warning text-dark rounded-pill ms-1">{{ $pembayaranPendingCount }}</span>
+                    @endif
+                </a>
                 <a href="{{ route('pemilik.kelola-kamar.create') }}" class="btn btn-outline-light px-3 py-2 rounded-3 d-flex align-items-center gap-1.5">
                     <i class="bi bi-plus-circle-fill"></i> Tambah Kamar
                 </a>
@@ -190,6 +196,24 @@
             </div>
             <a href="{{ route('pemilik.penyewaan.index', ['status' => 'pending']) }}" class="btn btn-warning btn-sm fw-bold px-3 py-1.5 rounded-pill text-nowrap">
                 Tinjau Pengajuan &rarr;
+            </a>
+        </div>
+    @endif
+
+    {{-- Pending Pembayaran Alert Banner --}}
+    @if(isset($pembayaranPendingCount) && $pembayaranPendingCount > 0)
+        <div class="alert alert-info border-0 shadow-sm rounded-3 mb-4 p-3 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
+            <div class="d-flex align-items-center gap-2.5">
+                <div class="rounded-circle bg-info-subtle text-info-emphasis p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                    <i class="bi bi-credit-card-2-front-fill fs-5"></i>
+                </div>
+                <div>
+                    <strong class="text-dark d-block">Ada {{ $pembayaranPendingCount }} Bukti Pembayaran Baru Menunggu Verifikasi!</strong>
+                    <span class="text-muted small">Penyewa telah mengirim bukti transfer pembayaran kos yang perlu Anda cek.</span>
+                </div>
+            </div>
+            <a href="{{ route('pemilik.pembayaran.index', ['status' => 'pending']) }}" class="btn btn-info text-white btn-sm fw-bold px-3 py-1.5 rounded-pill text-nowrap">
+                Verifikasi Pembayaran &rarr;
             </a>
         </div>
     @endif

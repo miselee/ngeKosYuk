@@ -29,6 +29,11 @@
                         <i class="bi bi-file-earmark-text-fill me-1"></i> Daftar Penyewaan
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('pemilik.pembayaran.*') ? 'active fw-bold' : '' }}" href="{{ route('pemilik.pembayaran.index') }}">
+                        <i class="bi bi-credit-card-2-front-fill me-1"></i> Pembayaran
+                    </a>
+                </li>
             </ul>
 
             <div class="d-flex align-items-center gap-3 pt-2 pt-lg-0">
