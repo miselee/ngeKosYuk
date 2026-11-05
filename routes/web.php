@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\KelolaKamarController;
+use App\Http\Controllers\PemilikController;
 use App\Http\Controllers\PenyewaController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -27,14 +29,22 @@ Route::get('/admin/dashboard', function () {
     return view('admin.dashboard');
 })->middleware('auth');
 
-// Dashboard Pemilik
-Route::get('/pemilik/dashboard', function () {
-    if (Auth::user()->role != 'pemilik') {
-        abort(403);
-    }
+// Pemilik Routes
+Route::middleware(['auth', 'role:pemilik'])->prefix('pemilik')->name('pemilik.')->group(function () {
+    Route::get('/dashboard', [PemilikController::class, 'dashboard'])->name('dashboard');
 
-    return view('pemilik.dashboard');
-})->middleware('auth');
+    // Kelola Kamar Kos
+    Route::get('/kelola-kamar', [KelolaKamarController::class, 'index'])->name('kelola-kamar.index');
+    Route::get('/kelola-kamar/create', [KelolaKamarController::class, 'create'])->name('kelola-kamar.create');
+    Route::post('/kelola-kamar', [KelolaKamarController::class, 'store'])->name('kelola-kamar.store');
+    Route::get('/kelola-kamar/{kamar}/edit', [KelolaKamarController::class, 'edit'])->name('kelola-kamar.edit');
+    Route::put('/kelola-kamar/{kamar}', [KelolaKamarController::class, 'update'])->name('kelola-kamar.update');
+    Route::delete('/kelola-kamar/{kamar}', [KelolaKamarController::class, 'destroy'])->name('kelola-kamar.destroy');
+    Route::patch('/kelola-kamar/{kamar}/toggle-status', [KelolaKamarController::class, 'toggleStatus'])->name('kelola-kamar.toggle-status');
+
+    // Quick Store Kos (jika pemilik baru belum punya kos)
+    Route::post('/kos/quick-store', [PemilikController::class, 'quickStoreKos'])->name('kos.quick-store');
+});
 
 // Penyewa Routes
 Route::middleware(['auth', 'role:penyewa'])->prefix('penyewa')->group(function () {
