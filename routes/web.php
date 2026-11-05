@@ -2,10 +2,12 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KelolaKamarController;
+use App\Http\Controllers\KelolaKosController;
 use App\Http\Controllers\KelolaPembayaranController;
 use App\Http\Controllers\KelolaPenyewaanController;
 use App\Http\Controllers\PemilikController;
 use App\Http\Controllers\PenyewaController;
+use App\Http\Controllers\UlasanKosController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -18,7 +20,7 @@ Route::post('/login', [AuthController::class, 'login']);
 // Logout
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth');
 
-//registr
+// registr
 Route::get('/register', [AuthController::class, 'showRegister']);
 Route::post('/register', [AuthController::class, 'register']);
 
@@ -34,6 +36,14 @@ Route::get('/admin/dashboard', function () {
 // Pemilik Routes
 Route::middleware(['auth', 'role:pemilik'])->prefix('pemilik')->name('pemilik.')->group(function () {
     Route::get('/dashboard', [PemilikController::class, 'dashboard'])->name('dashboard');
+
+    // Kelola data kos
+    Route::get('/kelola-kos', [KelolaKosController::class, 'index'])->name('kelola-kos.index');
+    Route::get('/kelola-kos/create', [KelolaKosController::class, 'create'])->name('kelola-kos.create');
+    Route::post('/kelola-kos', [KelolaKosController::class, 'store'])->name('kelola-kos.store');
+    Route::get('/kelola-kos/{kos}/edit', [KelolaKosController::class, 'edit'])->name('kelola-kos.edit');
+    Route::put('/kelola-kos/{kos}', [KelolaKosController::class, 'update'])->name('kelola-kos.update');
+    Route::delete('/kelola-kos/{kos}', [KelolaKosController::class, 'destroy'])->name('kelola-kos.destroy');
 
     // Kelola Kamar Kos
     Route::get('/kelola-kamar', [KelolaKamarController::class, 'index'])->name('kelola-kamar.index');
@@ -54,6 +64,9 @@ Route::middleware(['auth', 'role:pemilik'])->prefix('pemilik')->name('pemilik.')
     Route::get('/pembayaran', [KelolaPembayaranController::class, 'index'])->name('pembayaran.index');
     Route::patch('/pembayaran/{pembayaran}/verifikasi', [KelolaPembayaranController::class, 'verifikasi'])->name('pembayaran.verifikasi');
     Route::patch('/pembayaran/{pembayaran}/tolak', [KelolaPembayaranController::class, 'tolak'])->name('pembayaran.tolak');
+
+    // Ulasan Kos
+    Route::get('/ulasan', [UlasanKosController::class, 'index'])->name('ulasan.index');
 
     // Quick Store Kos (jika pemilik baru belum punya kos)
     Route::post('/kos/quick-store', [PemilikController::class, 'quickStoreKos'])->name('kos.quick-store');

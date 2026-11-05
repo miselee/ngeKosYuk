@@ -20,6 +20,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('pemilik.kelola-kos.*') ? 'active fw-bold' : '' }}" href="{{ route('pemilik.kelola-kos.index') }}">
+                        <i class="bi bi-buildings me-1"></i> Kelola Kos
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('pemilik.kelola-kamar.*') ? 'active fw-bold' : '' }}" href="{{ route('pemilik.kelola-kamar.index') }}">
                         <i class="bi bi-door-open-fill me-1"></i> Kelola Kamar
                     </a>
@@ -32,6 +37,11 @@
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('pemilik.pembayaran.*') ? 'active fw-bold' : '' }}" href="{{ route('pemilik.pembayaran.index') }}">
                         <i class="bi bi-credit-card-2-front-fill me-1"></i> Pembayaran
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('pemilik.ulasan.*') ? 'active fw-bold' : '' }}" href="{{ route('pemilik.ulasan.index') }}">
+                        <i class="bi bi-star-fill me-1"></i> Ulasan Kos
                     </a>
                 </li>
             </ul>
@@ -79,4 +89,3 @@
         background-color: #eaf4ff;
     }
 </style>
-
