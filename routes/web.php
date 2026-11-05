@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KelolaKamarController;
+use App\Http\Controllers\KelolaPenyewaanController;
 use App\Http\Controllers\PemilikController;
 use App\Http\Controllers\PenyewaController;
 use Illuminate\Support\Facades\Auth;
@@ -41,6 +42,12 @@ Route::middleware(['auth', 'role:pemilik'])->prefix('pemilik')->name('pemilik.')
     Route::put('/kelola-kamar/{kamar}', [KelolaKamarController::class, 'update'])->name('kelola-kamar.update');
     Route::delete('/kelola-kamar/{kamar}', [KelolaKamarController::class, 'destroy'])->name('kelola-kamar.destroy');
     Route::patch('/kelola-kamar/{kamar}/toggle-status', [KelolaKamarController::class, 'toggleStatus'])->name('kelola-kamar.toggle-status');
+
+    // Daftar & Kelola Penyewaan
+    Route::get('/penyewaan', [KelolaPenyewaanController::class, 'index'])->name('penyewaan.index');
+    Route::patch('/penyewaan/{sewa}/setujui', [KelolaPenyewaanController::class, 'setujui'])->name('penyewaan.setujui');
+    Route::patch('/penyewaan/{sewa}/tolak', [KelolaPenyewaanController::class, 'tolak'])->name('penyewaan.tolak');
+    Route::patch('/penyewaan/{sewa}/selesai', [KelolaPenyewaanController::class, 'selesai'])->name('penyewaan.selesai');
 
     // Quick Store Kos (jika pemilik baru belum punya kos)
     Route::post('/kos/quick-store', [PemilikController::class, 'quickStoreKos'])->name('kos.quick-store');

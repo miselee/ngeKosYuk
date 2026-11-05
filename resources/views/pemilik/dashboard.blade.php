@@ -135,8 +135,14 @@
                 <h2 class="fw-bold mb-1">Halo, {{ Auth::user()->name }}! 👋</h2>
                 <p class="text-white-50 mb-0">Kelola kamar kos Anda, pantau tingkat hunian, dan atur ketersediaan properti.</p>
             </div>
-            <div class="d-flex gap-2">
-                <a href="{{ route('pemilik.kelola-kamar.create') }}" class="btn btn-light fw-bold text-primary px-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-1.5">
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{{ route('pemilik.penyewaan.index') }}" class="btn btn-light fw-bold text-dark px-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-1.5">
+                    <i class="bi bi-file-earmark-text-fill text-primary"></i> Daftar Penyewaan
+                    @if(isset($sewaPendingCount) && $sewaPendingCount > 0)
+                        <span class="badge bg-danger rounded-pill ms-1">{{ $sewaPendingCount }}</span>
+                    @endif
+                </a>
+                <a href="{{ route('pemilik.kelola-kamar.create') }}" class="btn btn-outline-light px-3 py-2 rounded-3 d-flex align-items-center gap-1.5">
                     <i class="bi bi-plus-circle-fill"></i> Tambah Kamar
                 </a>
                 <button type="button" class="btn btn-outline-light px-3 py-2 rounded-3 d-flex align-items-center gap-1.5" data-bs-toggle="modal" data-bs-target="#modalTambahKos">
@@ -167,6 +173,24 @@
                 <span>{{ session('error') }}</span>
             </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    {{-- Pending Sewa Alert Banner --}}
+    @if(isset($sewaPendingCount) && $sewaPendingCount > 0)
+        <div class="alert alert-warning border-0 shadow-sm rounded-3 mb-4 p-3 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
+            <div class="d-flex align-items-center gap-2.5">
+                <div class="rounded-circle bg-warning-subtle text-warning-emphasis p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                    <i class="bi bi-bell-fill fs-5"></i>
+                </div>
+                <div>
+                    <strong class="text-dark d-block">Ada {{ $sewaPendingCount }} Pengajuan Sewa Baru Menunggu Persetujuan!</strong>
+                    <span class="text-muted small">Calon penyewa sedang menantikan respon persetujuan kamar dari Anda.</span>
+                </div>
+            </div>
+            <a href="{{ route('pemilik.penyewaan.index', ['status' => 'pending']) }}" class="btn btn-warning btn-sm fw-bold px-3 py-1.5 rounded-pill text-nowrap">
+                Tinjau Pengajuan &rarr;
+            </a>
         </div>
     @endif
 

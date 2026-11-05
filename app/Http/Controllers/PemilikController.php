@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Kamar;
 use App\Models\Kos;
+use App\Models\Sewa;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,13 +34,22 @@ class PemilikController extends Controller
             ->take(6)
             ->get();
 
+        $sewaPendingCount = Sewa::whereIn('kos_id', $kosIds)->where('status', 'pending')->count();
+        $sewaTerbaru = Sewa::whereIn('kos_id', $kosIds)
+            ->with(['penyewa', 'kamar', 'kos'])
+            ->latest()
+            ->take(5)
+            ->get();
+
         return view('pemilik.dashboard', compact(
             'daftarKos',
             'totalKos',
             'totalKamar',
             'kamarTersedia',
             'kamarTerisi',
-            'kamarTerbaru'
+            'kamarTerbaru',
+            'sewaPendingCount',
+            'sewaTerbaru'
         ));
     }
 
