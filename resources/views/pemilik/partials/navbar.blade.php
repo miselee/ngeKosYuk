@@ -24,6 +24,11 @@
                         <i class="bi bi-door-open-fill me-1"></i> Kelola Kamar
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('pemilik.penyewaan.*') ? 'active fw-bold' : '' }}" href="{{ route('pemilik.penyewaan.index') }}">
+                        <i class="bi bi-file-earmark-text-fill me-1"></i> Daftar Penyewaan
+                    </a>
+                </li>
             </ul>
 
             <div class="d-flex align-items-center gap-3 pt-2 pt-lg-0">
