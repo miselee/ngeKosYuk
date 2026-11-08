@@ -1,236 +1,181 @@
-
 @extends('layouts.app')
 
-@section('title', 'Riwayat Pembayaran - ngeKosYuk')
+@section('title', 'Pembayaran & Tagihan')
 
 @section('content')
-
 @include('penyewa.partials.navbar')
 
-<style>
-    :root {
-        --primary-blue: #2696D2;
-        --dark-blue: #2468B8;
-        --light-blue: #EAF4FF;
-        --text-dark: #263747;
-    }
-
-    body {
-        background: #f8fafe;
-        color: var(--text-dark);
-    }
-
-    .pembayaran-page {
-        max-width: 860px;
-        margin: 0 auto;
-        padding: 36px 20px 60px;
-    }
-
-    .page-title {
-        font-size: 24px;
-        font-weight: 800;
-        color: var(--dark-blue);
-        margin-bottom: 4px;
-    }
-
-    .page-subtitle {
-        color: #6b7d8e;
-        font-size: 14px;
-        margin-bottom: 28px;
-    }
-
-    .payment-list {
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-    }
-
-    .payment-item {
-        background: white;
-        border: 1px solid #e5eaf0;
-        border-radius: 14px;
-        padding: 22px 24px;
-        transition: .2s;
-    }
-
-    .payment-item:hover {
-        border-color: #c5d8ef;
-        box-shadow: 0 3px 12px rgba(38,104,184,.06);
-    }
-
-    .payment-kos {
-        font-weight: 700;
-        font-size: 16px;
-        color: var(--text-dark);
-    }
-
-    .payment-kamar {
-        font-size: 13px;
-        color: #6b7d8e;
-        margin-top: 2px;
-    }
-
-    .payment-amount {
-        font-weight: 800;
-        font-size: 19px;
-        color: var(--dark-blue);
-    }
-
-    .payment-detail-row {
-        font-size: 13px;
-        color: #5a6d7d;
-        margin-top: 10px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 18px;
-    }
-
-    .payment-detail-row span i {
-        color: var(--primary-blue);
-        margin-right: 3px;
-    }
-
-    .badge-status {
-        font-size: 12px;
-        padding: 5px 14px;
-        border-radius: 20px;
-        font-weight: 600;
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 70px 20px;
-        background: white;
-        border: 1px dashed #c5d8ef;
-        border-radius: 16px;
-    }
-
-    .empty-state i {
-        font-size: 52px;
-        color: #b0c8e2;
-    }
-
-    .empty-state h5 {
-        color: var(--dark-blue);
-        font-weight: 700;
-        margin-top: 16px;
-    }
-
-    .empty-state p {
-        color: #7b8794;
-    }
-
-    @media (max-width: 768px) {
-        .pembayaran-page {
-            padding: 24px 14px 40px;
-        }
-
-        .payment-item {
-            padding: 18px 16px;
-        }
-
-        .payment-row {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-            gap: 12px !important;
-        }
-    }
-</style>
-
-<div class="pembayaran-page">
-
-    <h1 class="page-title">Riwayat Pembayaran</h1>
-    <p class="page-subtitle">Semua catatan pembayaran sewa kos Anda.</p>
+<div class="container py-4">
+    <div class="nk-page-header">
+        <div>
+            <h1 class="nk-page-title">Riwayat Pembayaran</h1>
+            <p class="nk-page-subtitle">Pantau tagihan sewa aktif, status verifikasi pembayaran, dan unduh bukti kwitansi resmi.</p>
+        </div>
+    </div>
 
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle-fill"></i> {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="alert alert-success py-2 px-3 small mb-4" role="alert">
+            {{ session('success') }}
         </div>
     @endif
 
-    @if($pembayarans->count() > 0)
-        <div class="payment-list">
-            @foreach($pembayarans as $bayar)
-                <div class="payment-item">
-                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 payment-row">
-                        <div class="flex-grow-1">
-                            <div class="payment-kos">
-                                <i class="bi bi-building" style="color:var(--primary-blue);"></i>
-                                {{ $bayar->sewa->kamar->kos->nama_kos ?? '-' }}
-                            </div>
-                            <div class="payment-kamar">
-                                Kamar #{{ $bayar->sewa->kamar->nomor_kamar ?? '-' }}
-                            </div>
+    {{-- Metric Ledger Strip --}}
+    <div class="nk-metric-strip mb-4">
+        <div class="nk-metric-cell">
+            <span class="nk-metric-label">Total Dibayarkan (Lunas)</span>
+            <div class="nk-metric-value" style="color: var(--nk-teal);">
+                Rp {{ number_format($totalNominalLunas ?? 0, 0, ',', '.') }}
+            </div>
+            <div class="nk-metric-sub">{{ $totalDiverifikasi ?? 0 }} transaksi diverifikasi</div>
+        </div>
+        <div class="nk-metric-cell">
+            <span class="nk-metric-label">Menunggu Verifikasi</span>
+            <div class="nk-metric-value">
+                {{ $totalPending ?? 0 }}
+            </div>
+            <div class="nk-metric-sub">Sedang diperiksa oleh pemilik kos</div>
+        </div>
+        <div class="nk-metric-cell">
+            <span class="nk-metric-label">Kontrak Sewa Aktif</span>
+            <div class="nk-metric-value" style="color: var(--nk-blue);">
+                {{ isset($sewaAktif) ? $sewaAktif->count() : 0 }}
+            </div>
+            <div class="nk-metric-sub">Kamar yang sedang Anda tempati</div>
+        </div>
+    </div>
 
-                            <div class="payment-detail-row">
-                                <span>
-                                    <i class="bi bi-wallet2"></i>
-                                    @if($bayar->metode_pembayaran === 'transfer_bank')
-                                        Transfer Bank
-                                    @elseif($bayar->metode_pembayaran === 'e_wallet')
-                                        E-Wallet
-                                    @elseif($bayar->metode_pembayaran === 'tunai')
-                                        Tunai
-                                    @else
-                                        {{ ucwords(str_replace('_', ' ', $bayar->metode_pembayaran)) }}
-                                    @endif
-                                </span>
-                                <span>
-                                    <i class="bi bi-calendar-event"></i>
-                                    {{ \Carbon\Carbon::parse($bayar->tanggal_bayar)->format('d M Y') }}
-                                </span>
-                                @if($bayar->bukti_pembayaran)
-                                    <span>
-                                        <a href="{{ asset('storage/' . $bayar->bukti_pembayaran) }}" target="_blank" class="text-decoration-none" style="color:var(--dark-blue);">
-                                            <i class="bi bi-image"></i> Lihat Bukti
-                                        </a>
-                                    </span>
-                                @endif
-                                @if($bayar->keterangan)
-                                    <span class="text-muted fst-italic">
-                                        "{{ $bayar->keterangan }}"
-                                    </span>
-                                @endif
+    {{-- Active Rental Contracts Requiring Payment --}}
+    @if(isset($sewaAktif) && $sewaAktif->count() > 0)
+        <div class="nk-card mb-4">
+            <div class="nk-card-header">
+                <h2 class="nk-card-title">Tagihan Kontrak Sewa Aktif</h2>
+                <span class="small text-secondary">Pilih kontrak untuk mengirim pembayaran baru</span>
+            </div>
+            <div class="p-3 d-flex flex-column gap-2">
+                @foreach($sewaAktif as $kontrak)
+                    @php
+                        $start = \Carbon\Carbon::parse($kontrak->tanggal_mulai);
+                        $end = \Carbon\Carbon::parse($kontrak->tanggal_selesai);
+                        $durasiBulan = max(1, (int) round($start->diffInDays($end) / 30));
+                        $estimasiTotal = $durasiBulan * $kontrak->kamar->harga_per_bulan;
+                        $sudahLunas = $kontrak->pembayarans->where('status', 'diverifikasi')->sum('jumlah');
+                        $sisaTagihan = max(0, $estimasiTotal - $sudahLunas);
+                    @endphp
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 p-3 rounded-2 border" style="background-color: var(--nk-bg);">
+                        <div>
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <strong class="small">{{ $kontrak->kamar->kos->nama_kos }}</strong>
+                                <span class="font-mono small text-secondary">Kamar #{{ $kontrak->kamar->nomor_kamar }}</span>
                             </div>
+                            <span class="small text-secondary">
+                                Periode {{ $start->format('d M Y') }} s/d {{ $end->format('d M Y') }} ({{ $durasiBulan }} bln)
+                            </span>
                         </div>
 
-                        <div class="text-end">
-                            <div class="payment-amount">
-                                Rp {{ number_format($bayar->jumlah, 0, ',', '.') }}
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="text-end">
+                                <span class="d-block text-secondary" style="font-size: 0.72rem;">Sisa Tagihan Kontrak</span>
+                                <strong class="font-mono" style="color: {{ $sisaTagihan > 0 ? 'var(--nk-blue)' : 'var(--nk-teal)' }};">
+                                    Rp {{ number_format($sisaTagihan, 0, ',', '.') }}
+                                </strong>
                             </div>
-                            <div class="mt-2">
-                                @if($bayar->status === 'pending')
-                                    <span class="badge-status bg-warning text-dark">
-                                        <i class="bi bi-hourglass-split"></i> Menunggu Verifikasi
-                                    </span>
-                                @elseif($bayar->status === 'diverifikasi')
-                                    <span class="badge-status bg-success text-white">
-                                        <i class="bi bi-check-circle"></i> Diverifikasi
-                                    </span>
-                                @elseif($bayar->status === 'ditolak')
-                                    <span class="badge-status bg-danger text-white">
-                                        <i class="bi bi-x-circle"></i> Ditolak
-                                    </span>
-                                @endif
-                            </div>
+                            <a href="{{ route('penyewa.pembayaran.create', $kontrak->id) }}" class="btn-nk-primary py-1 px-3 small">
+                                Bayar Sekarang
+                            </a>
                         </div>
                     </div>
-                </div>
-            @endforeach
-        </div>
-
-        <div class="mt-4">
-            {{ $pembayarans->links() }}
-        </div>
-    @else
-        <div class="empty-state">
-            <i class="bi bi-receipt-cutoff d-block"></i>
-            <h5>Belum ada pembayaran</h5>
-            <p>Riwayat pembayaran Anda akan muncul di sini setelah melakukan pembayaran.</p>
+                @endforeach
+            </div>
         </div>
     @endif
 
-</div>
+    {{-- Payment History Table --}}
+    <div class="nk-card overflow-hidden">
+        <div class="nk-card-header">
+            <h2 class="nk-card-title">Daftar Transaksi Pembayaran</h2>
+            <span class="small text-secondary font-mono">{{ $pembayarans->total() }} transaksi</span>
+        </div>
 
+        @if($pembayarans->count() > 0)
+            <div class="table-responsive">
+                <table class="nk-table">
+                    <thead>
+                        <tr>
+                            <th>No. Invoice</th>
+                            <th>Properti &amp; Kamar</th>
+                            <th>Tanggal Bayar</th>
+                            <th>Metode</th>
+                            <th>Nominal</th>
+                            <th>Status</th>
+                            <th class="text-end">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($pembayarans as $bayar)
+                            <tr>
+                                <td class="font-mono fw-semibold">{{ $bayar->kode_invoice }}</td>
+                                <td>
+                                    <div class="fw-semibold">{{ $bayar->sewa->kamar->kos->nama_kos }}</div>
+                                    <div class="small text-secondary font-mono">Kamar #{{ $bayar->sewa->kamar->nomor_kamar }}</div>
+                                </td>
+                                <td class="font-mono small">
+                                    {{ \Carbon\Carbon::parse($bayar->tanggal_bayar)->format('d M Y') }}
+                                </td>
+                                <td>
+                                    <span class="nk-badge nk-badge-neutral">{{ $bayar->label_metode }}</span>
+                                </td>
+                                <td class="font-mono fw-bold">
+                                    Rp {{ number_format($bayar->jumlah, 0, ',', '.') }}
+                                </td>
+                                <td>
+                                    @if($bayar->status === 'diverifikasi')
+                                        <span class="nk-badge nk-badge-success">Diverifikasi</span>
+                                    @elseif($bayar->status === 'pending')
+                                        <span class="nk-badge nk-badge-warning">Menunggu Konfirmasi</span>
+                                    @else
+                                        <span class="nk-badge nk-badge-danger">Ditolak</span>
+                                    @endif
+
+                                    @if($bayar->keterangan)
+                                        <div class="small text-secondary mt-1" style="font-size: 0.74rem;">
+                                            {{ $bayar->keterangan }}
+                                        </div>
+                                    @endif
+                                </td>
+                                <td class="text-end">
+                                    <div class="d-inline-flex gap-1">
+                                        <a href="{{ route('penyewa.pembayaran.kwitansi', $bayar->id) }}"
+                                           class="btn-nk-secondary py-1 px-2 small">
+                                            Kwitansi
+                                        </a>
+                                        @if($bayar->status === 'ditolak')
+                                            <a href="{{ route('penyewa.pembayaran.create', $bayar->sewa_id) }}"
+                                               class="btn-nk-primary py-1 px-2 small">
+                                                Kirim Ulang
+                                            </a>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            @if($pembayarans->hasPages())
+                <div class="p-3 border-top">
+                    {{ $pembayarans->links() }}
+                </div>
+            @endif
+        @else
+            <div class="p-5 text-center">
+                <h3 class="h6 fw-bold mb-1">Belum Ada Transaksi Pembayaran</h3>
+                <p class="text-secondary small mb-3">Transaksi pembayaran kos Anda akan tercatat secara otomatis di halaman ini.</p>
+                <a href="{{ url('/penyewa/riwayat-sewa') }}" class="btn-nk-secondary small">
+                    Cek Kontrak Sewa Saya
+                </a>
+            </div>
+        @endif
+    </div>
+</div>
 @endsection

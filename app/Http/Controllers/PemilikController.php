@@ -70,17 +70,23 @@ class PemilikController extends Controller
             'tipe_kos' => 'required|in:putra,putri,campur',
             'deskripsi' => 'nullable|string|max:1000',
             'foto' => 'nullable|url|max:255',
+            'foto_file' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         /** @var \App\Models\User $user */
         $user = Auth::user();
+
+        $fotoPath = $validated['foto'] ?? null;
+        if ($request->hasFile('foto_file')) {
+            $fotoPath = $request->file('foto_file')->store('foto_kos', 'public');
+        }
 
         $user->kos()->create([
             'nama_kos' => $validated['nama_kos'],
             'alamat' => $validated['alamat'],
             'tipe_kos' => $validated['tipe_kos'],
             'deskripsi' => $validated['deskripsi'] ?? null,
-            'foto' => $validated['foto'] ?? null,
+            'foto' => $fotoPath,
         ]);
 
         return redirect()->back()->with('success', 'Kos berhasil didaftarkan! Sekarang Anda dapat menambahkan kamar.');

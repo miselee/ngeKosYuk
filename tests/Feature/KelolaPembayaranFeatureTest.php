@@ -145,4 +145,21 @@ class KelolaPembayaranFeatureTest extends TestCase
 
         $response->assertStatus(403);
     }
+
+    public function test_pemilik_can_view_official_kwitansi(): void
+    {
+        $response = $this->actingAs($this->pemilik)->get(route('pemilik.pembayaran.kwitansi', $this->pembayaranPending));
+
+        $response->assertStatus(200);
+        $response->assertSee($this->pembayaranPending->kode_invoice);
+        $response->assertSee('Dewi Sartika');
+        $response->assertSee('Kos Melati Bahagia');
+    }
+
+    public function test_pemilik_cannot_view_another_owners_kwitansi(): void
+    {
+        $response = $this->actingAs($this->pemilikLain)->get(route('pemilik.pembayaran.kwitansi', $this->pembayaranPending));
+
+        $response->assertStatus(403);
+    }
 }

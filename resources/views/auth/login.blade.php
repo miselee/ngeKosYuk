@@ -1,262 +1,205 @@
-
 @extends('layouts.app')
 
-@section('title', 'Sign In - ngeKosYuk')
+@section('title', 'Masuk Akun')
 
-@section('content')
-
+@push('styles')
 <style>
-    body {
-        background: linear-gradient(120deg, #dff3fc, #edf5fa);
-        color: #263747;
-        font-family: Arial, sans-serif;
-    }
-
-    .auth-wrapper {
+    .auth-shell {
         min-height: 100vh;
-        display: flex;
-        align-items: center;
-        padding: 40px 0;
+        display: grid;
+        grid-template-columns: 1fr;
+        background-color: var(--nk-bg);
     }
 
-    .auth-container {
-        background: white;
-        border-radius: 18px;
-        overflow: hidden;
-        box-shadow: 0 15px 45px rgba(40, 105, 145, 0.12);
-    }
-
-    .auth-navbar {
-        padding: 16px 25px;
-        border-bottom: 1px solid #edf1f5;
-    }
-
-    .brand {
-        color: #238dc5;
-        font-size: 25px;
-        font-weight: 800;
-        text-decoration: none;
-    }
-
-    .auth-content {
-        min-height: 580px;
-    }
-
-    .auth-form-section {
-        padding: 65px 55px;
-        background: #fff;
-    }
-
-    .auth-image-section {
-        min-height: 580px;
-        position: relative;
-        background: #dceffc;
-    }
-
-    .auth-image {
-        width: 100%;
-        height: 100%;
-        min-height: 580px;
-        object-fit: cover;
-    }
-
-    .form-control {
-        padding: 13px 15px;
-        border: 1px solid #e0e8ee;
-        border-radius: 9px;
-        font-size: 14px;
-    }
-
-    .form-control:focus {
-        border-color: #2696d2;
-        box-shadow: 0 0 0 3px rgba(38, 150, 210, .12);
-    }
-
-    .btn-blue {
-        background: #2696d2;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 13px;
-        font-weight: 600;
-    }
-
-    .btn-blue:hover {
-        background: #187db5;
-        color: white;
-    }
-
-    .auth-link {
-        color: #2696d2;
-        text-decoration: none;
-        font-weight: 600;
-    }
-
-    .auth-tabs {
-        display: flex;
-        gap: 30px;
-        border-bottom: 1px solid #e5eaf0;
-        margin-bottom: 28px;
-    }
-
-    .auth-tabs a {
-        color: #687786;
-        text-decoration: none;
-        padding-bottom: 12px;
-    }
-
-    .auth-tabs a.active {
-        color: #2696d2;
-        border-bottom: 2px solid #2696d2;
-        font-weight: 700;
-    }
-
-    .image-caption {
-        position: absolute;
-        bottom: 25px;
-        left: 25px;
-        right: 25px;
-        background: white;
-        border-radius: 12px;
-        padding: 18px;
-        box-shadow: 0 5px 20px rgba(0,0,0,.08);
-    }
-
-    @media (max-width: 991px) {
-        .auth-form-section {
-            padding: 45px 30px;
+    @media (min-width: 992px) {
+        .auth-shell {
+            grid-template-columns: 1.05fr 0.95fr;
         }
     }
+
+    .auth-visual {
+        position: relative;
+        background-color: var(--nk-ink);
+        color: #FFFFFF;
+        padding: 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        overflow: hidden;
+    }
+
+    .auth-visual-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.32;
+    }
+
+    .auth-visual-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .auth-form-pane {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2.5rem 1.5rem;
+        background-color: var(--nk-surface);
+    }
+
+    .auth-form-box {
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .pw-toggle-btn {
+        background: transparent;
+        border: 1px solid var(--nk-border-strong);
+        border-left: none;
+        border-radius: 0 8px 8px 0;
+        padding: 0 0.85rem;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--nk-muted);
+    }
+
+    .pw-toggle-btn:hover {
+        color: var(--nk-ink);
+        background-color: var(--nk-surface-subtle);
+    }
 </style>
+@endpush
 
-<div class="auth-wrapper">
-    <div class="container">
-        <div class="auth-container">
+@section('content')
+<div class="auth-shell">
+    <div class="auth-visual d-none d-lg-flex">
+        <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80"
+             alt="Interior kamar kos modern"
+             width="1200"
+             height="900"
+             class="auth-visual-img">
 
-            <nav class="auth-navbar d-flex justify-content-between align-items-center">
-                <a href="/" class="brand">
-                    <i class="bi bi-house-door-fill"></i> ngeKosYuk
-                </a>
-            </nav>
+        <div class="auth-visual-content d-flex align-items-center gap-3">
+            <img src="{{ asset('images/logo/logo-ngekosyuk.jpeg') }}"
+                 alt="Logo ngeKosYuk"
+                 width="42"
+                 height="42"
+                 class="rounded-2 border border-secondary">
+            <span class="fw-bold fs-5">ngeKosYuk</span>
+        </div>
 
-            <div class="row g-0 auth-content">
+        <div class="auth-visual-content my-auto py-5" style="max-width: 460px;">
+            <h1 class="fw-bold mb-3" style="font-size: 2.1rem; letter-spacing: -0.03em; line-height: 1.2;">
+                Kelola dan temukan hunian kos tanpa perantara rumit.
+            </h1>
+            <p class="mb-0" style="color: #CBD5E1; font-size: 0.95rem;">
+                Satu tempat untuk cek ketersediaan kamar, ajukan kontrak sewa, hingga cetak kwitansi pembayaran bulanan secara transparan.
+            </p>
+        </div>
 
-                <div class="col-lg-5">
-                    <div class="auth-form-section h-100">
-
-                        <h2 class="fw-bold mb-2">Login to ngeKosYuk</h2>
-
-                        <p class="text-secondary small mb-4">
-                            Selamat datang kembali! Masuk untuk menemukan
-                            dan mengelola tempat tinggalmu.
-                        </p>
-
-                        <div class="auth-tabs">
-                            <a href="{{ url('/register') }}">Register</a>
-                            <a href="{{ url('/login') }}" class="active">Login</a>
-                        </div>
-
-                        @if ($errors->any())
-                            <div class="alert alert-danger small">
-                                {{ $errors->first() }}
-                            </div>
-                        @endif
-
-                        <form action="{{ url('/login') }}" method="POST">
-                            @csrf
-
-                            <div class="mb-3">
-                                <label class="form-label small fw-semibold">
-                                    Email
-                                </label>
-                                <input
-                                    type="email"
-                                    name="email"
-                                    class="form-control"
-                                    placeholder="Masukkan email"
-                                    value="{{ old('email') }}"
-                                    required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label small fw-semibold">
-                                    Password
-                                </label>
-                                <input
-                                    type="password"
-                                    name="password"
-                                    class="form-control"
-                                    placeholder="Masukkan password"
-                                    required>
-                            </div>
-
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <div class="form-check">
-                                    <input
-                                        class="form-check-input"
-                                        type="checkbox"
-                                        name="remember"
-                                        id="remember">
-                                    <label class="form-check-label small" for="remember">
-                                        Remember me
-                                    </label>
-                                </div>
-                            </div>
-
-                            <button type="submit" class="btn btn-blue w-100">
-                                SIGN IN
-                            </button>
-                        </form>
-
-                        <p class="text-center text-secondary small mt-4">
-                            Belum punya akun?
-                            <a href="{{ url('/register') }}" class="auth-link">
-                                Sign Up
-                            </a>
-                        </p>
-
-                        <div class="text-center mt-3">
-                            <a href="/" class="text-secondary small text-decoration-none">
-                                <i class="bi bi-arrow-left"></i>
-                                Kembali ke Beranda
-                            </a>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div class="col-lg-7 d-none d-lg-block">
-                    <div class="auth-image-section h-100">
-
-                        <img
-                            src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1200"
-                            alt="Hunian nyaman"
-                            class="auth-image">
-
-                        <div class="image-caption d-flex align-items-center gap-3">
-                            <div class="rounded-circle d-flex align-items-center justify-content-center"
-                                 style="width:55px;height:55px;background:#e0f2fc;flex-shrink:0;">
-                                <i class="bi bi-house-heart-fill fs-3"
-                                   style="color:#2696d2;"></i>
-                            </div>
-
-                            <div>
-                                <h6 class="fw-bold mb-1">
-                                    Temukan Kos Impianmu
-                                </h6>
-                                <p class="text-secondary small mb-0">
-                                    Kos nyaman, lokasi strategis,
-                                    harga bersahabat.
-                                </p>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
+        <div class="auth-visual-content d-flex gap-4 pt-3 border-top border-secondary border-opacity-50 small" style="color: #CBD5E1;">
+            <div>
+                <strong class="text-white d-block">Penyewa Kos</strong>
+                Cari kamar &amp; pantau tagihan
+            </div>
+            <div>
+                <strong class="text-white d-block">Pemilik Kos</strong>
+                Kelola unit &amp; konfirmasi sewa
             </div>
         </div>
     </div>
-</div>
 
+    <div class="auth-form-pane">
+        <div class="auth-form-box">
+            <div class="d-flex align-items-center gap-2 mb-4">
+                <img src="{{ asset('images/logo/logo-ngekosyuk.jpeg') }}"
+                     alt="Logo ngeKosYuk"
+                     width="36"
+                     height="36"
+                     class="nk-brand-logo">
+                <span class="fw-bold fs-5">ngeKosYuk</span>
+            </div>
+
+            <h2 class="fw-bold mb-1" style="font-size: 1.5rem; letter-spacing: -0.025em;">Masuk ke Akun Anda</h2>
+            <p class="text-secondary small mb-4">Gunakan email terdaftar untuk mengakses panel penyewa atau pemilik kos.</p>
+
+            @if(session('success'))
+                <div class="alert alert-success py-2 px-3 small mb-3" role="alert">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="alert alert-danger py-2 px-3 small mb-3" role="alert">
+                    {{ $errors->first() }}
+                </div>
+            @endif
+
+            <form action="{{ url('/login') }}" method="POST">
+                @csrf
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Alamat Email</label>
+                    <input type="email"
+                           id="email"
+                           name="email"
+                           class="form-control"
+                           placeholder="nama@email.com"
+                           value="{{ old('email') }}"
+                           required
+                           autofocus>
+                </div>
+
+                <div class="mb-4">
+                    <label for="password" class="form-label">Kata Sandi</label>
+                    <div class="input-group">
+                        <input type="password"
+                               id="password"
+                               name="password"
+                               class="form-control"
+                               style="border-right: none;"
+                               placeholder="Masukkan kata sandi"
+                               required>
+                        <button type="button"
+                                class="pw-toggle-btn"
+                                id="btnTogglePassword"
+                                aria-label="Tampilkan atau sembunyikan kata sandi">
+                            Lihat
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-nk-primary w-100 py-2 mb-3">
+                    Masuk Sekarang
+                </button>
+            </form>
+
+            <p class="text-center text-secondary small mb-0">
+                Belum punya akun?
+                <a href="{{ url('/register') }}" class="fw-semibold text-decoration-none" style="color: var(--nk-blue);">
+                    Daftar akun baru
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const pwInput = document.getElementById('password');
+    const toggleBtn = document.getElementById('btnTogglePassword');
+    if (pwInput && toggleBtn) {
+        toggleBtn.addEventListener('click', function () {
+            const isHidden = pwInput.type === 'password';
+            pwInput.type = isHidden ? 'text' : 'password';
+            toggleBtn.textContent = isHidden ? 'Sembunyikan' : 'Lihat';
+        });
+    }
+});
+</script>
+@endpush
