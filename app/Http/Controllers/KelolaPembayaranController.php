@@ -46,6 +46,10 @@ class KelolaPembayaranController extends Controller
             });
         }
 
+        if ($request->filled('metode')) {
+            $query->where('metode_pembayaran', $request->input('metode'));
+        }
+
         if ($request->filled('q')) {
             $keyword = $request->input('q');
             $query->where(function ($q) use ($keyword) {
@@ -73,6 +77,21 @@ class KelolaPembayaranController extends Controller
     }
 
     /**
+     * Tampilkan halaman kwitansi resmi pembayaran untuk pemilik kos.
+     */
+    public function kwitansi(Pembayaran $pembayaran): View
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        $this->ensurePembayaranBelongsToUser($pembayaran, $user->id);
+
+        $pembayaran->loadMissing(['sewa.penyewa', 'sewa.kamar.kos.pemilik']);
+
+        return view('pembayaran.kwitansi', compact('pembayaran'));
+    }
+
+    /**
      * Konfirmasi dan verifikasi pembayaran penyewa.
      */
     public function verifikasi(Pembayaran $pembayaran): RedirectResponse
@@ -88,11 +107,15 @@ class KelolaPembayaranController extends Controller
 
         $pembayaran->update(['status' => 'diverifikasi']);
 
+        if ($pembayaran->sewa && $pembayaran->sewa->kamar && $pembayaran->sewa->kamar->status !== 'terisi') {
+            $pembayaran->sewa->kamar->update(['status' => 'terisi']);
+        }
+
         $namaPenyewa = $pembayaran->sewa->penyewa->name ?? 'Penyewa';
         $nominal = number_format($pembayaran->jumlah, 0, ',', '.');
 
         return redirect()->back()
-            ->with('success', "Pembayaran sebesar Rp {$nominal} dari {$namaPenyewa} berhasil diverifikasi!");
+            ->with('success', "Pembayaran {$pembayaran->kode_invoice} sebesar Rp {$nominal} dari {$namaPenyewa} berhasil diverifikasi!");
     }
 
     /**

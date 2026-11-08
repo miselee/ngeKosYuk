@@ -183,6 +183,36 @@ class PenyewaFeatureTest extends TestCase
         $response->assertSee('Diverifikasi');
     }
 
+    public function test_penyewa_can_view_form_pembayaran_and_kwitansi(): void
+    {
+        $sewa = Sewa::create([
+            'user_id' => $this->penyewa->id,
+            'kamar_id' => $this->kamar->id,
+            'kos_id' => $this->kos->id,
+            'tanggal_mulai' => now()->format('Y-m-d'),
+            'tanggal_selesai' => now()->addMonths(3)->format('Y-m-d'),
+            'status' => 'disetujui',
+        ]);
+
+        $formResponse = $this->actingAs($this->penyewa)->get('/penyewa/pembayaran/' . $sewa->id);
+        $formResponse->assertStatus(200);
+        $formResponse->assertSee('Ringkasan Tagihan Sewa');
+        $formResponse->assertSee('Kos Melati Indah');
+
+        $pembayaran = Pembayaran::create([
+            'sewa_id' => $sewa->id,
+            'jumlah' => 750000,
+            'metode_pembayaran' => 'transfer_bank',
+            'status' => 'diverifikasi',
+            'tanggal_bayar' => now()->format('Y-m-d'),
+        ]);
+
+        $kwitansiResponse = $this->actingAs($this->penyewa)->get('/penyewa/pembayaran/' . $pembayaran->id . '/kwitansi');
+        $kwitansiResponse->assertStatus(200);
+        $kwitansiResponse->assertSee($pembayaran->kode_invoice);
+        $kwitansiResponse->assertSee('LUNAS / TERVERIFIKASI');
+    }
+
     public function test_penyewa_can_submit_ulasan_for_approved_or_completed_sewa(): void
     {
         $sewa = Sewa::create([

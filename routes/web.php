@@ -18,7 +18,7 @@ Route::post('/login', [AuthController::class, 'login']);
 // Logout
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth');
 
-//registr
+// Register
 Route::get('/register', [AuthController::class, 'showRegister']);
 Route::post('/register', [AuthController::class, 'register']);
 
@@ -52,6 +52,7 @@ Route::middleware(['auth', 'role:pemilik'])->prefix('pemilik')->name('pemilik.')
 
     // Konfirmasi Pembayaran
     Route::get('/pembayaran', [KelolaPembayaranController::class, 'index'])->name('pembayaran.index');
+    Route::get('/pembayaran/{pembayaran}/kwitansi', [KelolaPembayaranController::class, 'kwitansi'])->name('pembayaran.kwitansi');
     Route::patch('/pembayaran/{pembayaran}/verifikasi', [KelolaPembayaranController::class, 'verifikasi'])->name('pembayaran.verifikasi');
     Route::patch('/pembayaran/{pembayaran}/tolak', [KelolaPembayaranController::class, 'tolak'])->name('pembayaran.tolak');
 
@@ -70,9 +71,10 @@ Route::middleware(['auth', 'role:penyewa'])->prefix('penyewa')->group(function (
     Route::post('/pengajuan-sewa', [PenyewaController::class, 'ajukanSewa']);
 
     // Pembayaran
-    Route::get('/pembayaran', [PenyewaController::class, 'daftarPembayaran']);
-    Route::get('/pembayaran/{sewaId}', [PenyewaController::class, 'formPembayaran']);
-    Route::post('/pembayaran', [PenyewaController::class, 'bayar']);
+    Route::get('/pembayaran', [PenyewaController::class, 'daftarPembayaran'])->name('penyewa.pembayaran.index');
+    Route::get('/pembayaran/{pembayaranId}/kwitansi', [PenyewaController::class, 'kwitansiPembayaran'])->name('penyewa.pembayaran.kwitansi');
+    Route::get('/pembayaran/{sewaId}', [PenyewaController::class, 'formPembayaran'])->name('penyewa.pembayaran.create');
+    Route::post('/pembayaran', [PenyewaController::class, 'bayar'])->name('penyewa.pembayaran.store');
 
     // Riwayat Sewa
     Route::get('/riwayat-sewa', [PenyewaController::class, 'riwayatSewa']);

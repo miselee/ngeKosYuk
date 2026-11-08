@@ -1,237 +1,171 @@
-
 @extends('layouts.app')
 
-@section('title', 'Ajukan Sewa - ngeKosYuk')
+@section('title', 'Pengajuan Sewa Kamar')
 
 @section('content')
-
 @include('penyewa.partials.navbar')
 
-<style>
-    :root {
-        --primary-blue: #2696D2;
-        --dark-blue: #2468B8;
-        --light-blue: #EAF4FF;
-        --text-dark: #263747;
-    }
+<div class="container py-4" style="max-width: 960px;">
+    <div class="mb-3">
+        <a href="{{ url('/penyewa/detail-kos/' . $kamar->kos_id) }}" class="small text-decoration-none fw-medium" style="color: var(--nk-muted);">
+            &larr; Kembali ke {{ $kamar->kos->nama_kos }}
+        </a>
+    </div>
 
-    body {
-        background: #f8fafe;
-        color: var(--text-dark);
-    }
+    <div class="nk-page-header">
+        <div>
+            <h1 class="nk-page-title">Formulir Pengajuan Sewa</h1>
+            <p class="nk-page-subtitle">Tentukan periode mulai dan selesai sewa untuk Kamar {{ $kamar->nomor_kamar }}.</p>
+        </div>
+    </div>
 
-    .form-page {
-        max-width: 680px;
-        margin: 0 auto;
-        padding: 36px 20px 60px;
-    }
-
-    .page-title {
-        font-size: 24px;
-        font-weight: 800;
-        color: var(--dark-blue);
-        margin-bottom: 6px;
-    }
-
-    .page-subtitle {
-        color: #6b7d8e;
-        font-size: 14px;
-        margin-bottom: 28px;
-    }
-
-    .summary-card {
-        background: var(--light-blue);
-        border: 1px solid #cbdcf3;
-        border-radius: 14px;
-        padding: 22px 24px;
-        margin-bottom: 28px;
-    }
-
-    .summary-card .kos-name {
-        font-weight: 700;
-        font-size: 17px;
-        color: var(--dark-blue);
-    }
-
-    .summary-card .detail-row {
-        font-size: 14px;
-        color: #4a5b6a;
-        margin-top: 6px;
-    }
-
-    .summary-card .price {
-        font-weight: 800;
-        font-size: 20px;
-        color: var(--dark-blue);
-        margin-top: 10px;
-    }
-
-    .summary-card .price small {
-        font-weight: 400;
-        font-size: 13px;
-        color: #6b7d8e;
-    }
-
-    .form-card {
-        background: white;
-        border: 1px solid #e5eaf0;
-        border-radius: 14px;
-        padding: 28px 26px;
-    }
-
-    .form-card label {
-        font-weight: 600;
-        font-size: 14px;
-        color: var(--text-dark);
-        margin-bottom: 6px;
-    }
-
-    .form-card .form-control {
-        border: 1px solid #c7d4e1;
-        border-radius: 9px;
-        padding: 10px 14px;
-        font-size: 14px;
-    }
-
-    .form-card .form-control:focus {
-        border-color: var(--primary-blue);
-        box-shadow: 0 0 0 3px rgba(38,150,210,.12);
-    }
-
-    .btn-submit {
-        background: var(--dark-blue);
-        color: white;
-        border: none;
-        padding: 12px 30px;
-        border-radius: 9px;
-        font-weight: 700;
-        font-size: 15px;
-        transition: .2s;
-    }
-
-    .btn-submit:hover {
-        background: var(--primary-blue);
-        color: white;
-    }
-
-    .btn-back-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        color: var(--dark-blue);
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 14px;
-        margin-bottom: 22px;
-    }
-
-    .btn-back-link:hover {
-        color: var(--primary-blue);
-    }
-
-    @media (max-width: 768px) {
-        .form-page {
-            padding: 24px 14px 40px;
-        }
-
-        .form-card {
-            padding: 22px 18px;
-        }
-    }
-</style>
-
-<div class="form-page">
-
-    <a href="{{ url('/penyewa/detail-kos/' . $kamar->kos->id) }}" class="btn-back-link">
-        <i class="bi bi-arrow-left"></i> Kembali ke detail kos
-    </a>
-
-    <h1 class="page-title">Ajukan Sewa</h1>
-    <p class="page-subtitle">Isi data berikut untuk mengajukan sewa kamar.</p>
-
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle-fill"></i> {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    @if(session('error'))
+        <div class="alert alert-danger py-2 px-3 small mb-4" role="alert">
+            {{ session('error') }}
         </div>
     @endif
 
     @if($errors->any())
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong><i class="bi bi-exclamation-triangle-fill"></i> Terjadi kesalahan:</strong>
-            <ul class="mb-0 mt-1">
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
+        <div class="alert alert-danger py-2 px-3 small mb-4" role="alert">
+            <ul class="mb-0 ps-3">
+                @foreach($errors->all() as $err)
+                    <li>{{ $err }}</li>
                 @endforeach
             </ul>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
-    <div class="summary-card">
-        <div class="kos-name">
-            <i class="bi bi-building"></i> {{ $kamar->kos->nama_kos }}
+    <div class="row g-4">
+        {{-- Left Booking Form --}}
+        <div class="col-lg-7">
+            <form action="{{ url('/penyewa/pengajuan-sewa') }}" method="POST" class="nk-card p-4">
+                @csrf
+                <input type="hidden" name="kamar_id" value="{{ $kamar->id }}">
+                <input type="hidden" name="kos_id" value="{{ $kamar->kos_id }}">
+
+                <h2 class="nk-card-title mb-3">Periode Kontrak Sewa</h2>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6">
+                        <label for="tanggal_mulai" class="form-label">Tanggal Mulai Masuk</label>
+                        <input type="date"
+                               id="tanggal_mulai"
+                               name="tanggal_mulai"
+                               class="form-control font-mono"
+                               value="{{ old('tanggal_mulai', date('Y-m-d')) }}"
+                               required>
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="tanggal_selesai" class="form-label">Tanggal Selesai Sewa</label>
+                        <input type="date"
+                               id="tanggal_selesai"
+                               name="tanggal_selesai"
+                               class="form-control font-mono"
+                               value="{{ old('tanggal_selesai', date('Y-m-d', strtotime('+1 month'))) }}"
+                               required>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    <span class="small text-secondary align-self-center">Durasi cepat:</span>
+                    <button type="button" class="btn-nk-secondary py-1 px-2 small durasi-preset" data-months="1">1 Bulan</button>
+                    <button type="button" class="btn-nk-secondary py-1 px-2 small durasi-preset" data-months="3">3 Bulan</button>
+                    <button type="button" class="btn-nk-secondary py-1 px-2 small durasi-preset" data-months="6">6 Bulan</button>
+                    <button type="button" class="btn-nk-secondary py-1 px-2 small durasi-preset" data-months="12">12 Bulan</button>
+                </div>
+
+                <div class="mb-4">
+                    <label for="catatan" class="form-label">Catatan untuk Pemilik Kos (Opsional)</label>
+                    <textarea id="catatan"
+                              name="catatan"
+                              rows="3"
+                              class="form-control"
+                              placeholder="Contoh: Rencana pindahan hari Sabtu pagi, membawa kendaraan motor.">{{ old('catatan') }}</textarea>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                    <a href="{{ url('/penyewa/detail-kos/' . $kamar->kos_id) }}" class="btn-nk-secondary">
+                        Batal
+                    </a>
+                    <button type="submit" class="btn-nk-primary">
+                        Kirim Pengajuan Sewa
+                    </button>
+                </div>
+            </form>
         </div>
-        <div class="detail-row">
-            <i class="bi bi-hash"></i> Kamar {{ $kamar->nomor_kamar }}
+
+        {{-- Right Unit & Cost Summary --}}
+        <div class="col-lg-5">
+            <div class="nk-card p-4">
+                <span class="nk-badge nk-badge-info mb-2">Ringkasan Unit</span>
+                <h3 class="h6 fw-bold mb-1">{{ $kamar->kos->nama_kos }}</h3>
+                <p class="small text-secondary mb-3">{{ $kamar->kos->alamat }}</p>
+
+                <div class="py-3 border-top border-bottom mb-3">
+                    <div class="d-flex justify-content-between small mb-2">
+                        <span class="text-secondary">Nomor Kamar</span>
+                        <strong class="font-mono">Kamar {{ $kamar->nomor_kamar }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between small mb-2">
+                        <span class="text-secondary">Harga per Bulan</span>
+                        <strong class="font-mono">Rp {{ number_format($kamar->harga_per_bulan, 0, ',', '.') }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between small">
+                        <span class="text-secondary">Estimasi Durasi</span>
+                        <strong class="font-mono" id="estimasiDurasiLabel">1 bulan</strong>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-baseline mb-2">
+                    <span class="small fw-semibold">Estimasi Total Kontrak</span>
+                    <strong class="font-mono fs-5" style="color: var(--nk-blue);" id="estimasiTotalLabel">
+                        Rp {{ number_format($kamar->harga_per_bulan, 0, ',', '.') }}
+                    </strong>
+                </div>
+                <p class="text-secondary mb-0" style="font-size: 0.76rem;">
+                    Pembayaran dilakukan setelah pengajuan sewa Anda disetujui oleh pemilik kos.
+                </p>
+            </div>
         </div>
-        <div class="price">
-            Rp {{ number_format($kamar->harga_per_bulan, 0, ',', '.') }}
-            <small>/bulan</small>
-        </div>
-    </div>
-
-    <div class="form-card">
-        <form action="{{ url('/penyewa/pengajuan-sewa') }}" method="POST">
-            @csrf
-            <input type="hidden" name="kamar_id" value="{{ $kamar->id }}">
-            <input type="hidden" name="kos_id" value="{{ $kamar->kos->id }}">
-
-            <div class="mb-3">
-                <label for="tanggal_mulai">Tanggal Mulai Sewa</label>
-                <input type="date"
-                       id="tanggal_mulai"
-                       name="tanggal_mulai"
-                       class="form-control @error('tanggal_mulai') is-invalid @enderror"
-                       value="{{ old('tanggal_mulai') }}"
-                       required>
-                @error('tanggal_mulai')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="mb-3">
-                <label for="tanggal_selesai">Tanggal Selesai Sewa</label>
-                <input type="date"
-                       id="tanggal_selesai"
-                       name="tanggal_selesai"
-                       class="form-control @error('tanggal_selesai') is-invalid @enderror"
-                       value="{{ old('tanggal_selesai') }}"
-                       required>
-                @error('tanggal_selesai')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="mb-4">
-                <label for="catatan">Catatan <span class="text-muted fw-normal">(opsional)</span></label>
-                <textarea id="catatan"
-                          name="catatan"
-                          class="form-control @error('catatan') is-invalid @enderror"
-                          rows="3"
-                          placeholder="Misalnya: saya butuh kasur tambahan, dst.">{{ old('catatan') }}</textarea>
-                @error('catatan')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="d-flex justify-content-end">
-                <button type="submit" class="btn-submit">
-                    <i class="bi bi-send-fill"></i> Ajukan Sewa
-                </button>
-            </div>
-        </form>
     </div>
 </div>
-
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const hargaPerBulan = {{ (int) $kamar->harga_per_bulan }};
+    const startInput = document.getElementById('tanggal_mulai');
+    const endInput = document.getElementById('tanggal_selesai');
+    const durasiLabel = document.getElementById('estimasiDurasiLabel');
+    const totalLabel = document.getElementById('estimasiTotalLabel');
+
+    function updateEstimation() {
+        if (!startInput.value || !endInput.value) return;
+        const start = new Date(startInput.value);
+        const end = new Date(endInput.value);
+        const diffDays = Math.max(1, Math.round((end - start) / (1000 * 60 * 60 * 24)));
+        const months = Math.max(1, Math.ceil(diffDays / 30));
+        const total = months * hargaPerBulan;
+
+        durasiLabel.textContent = months + ' bulan (' + diffDays + ' hari)';
+        totalLabel.textContent = 'Rp ' + total.toLocaleString('id-ID');
+    }
+
+    startInput.addEventListener('change', updateEstimation);
+    endInput.addEventListener('change', updateEstimation);
+
+    document.querySelectorAll('.durasi-preset').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const months = parseInt(btn.getAttribute('data-months'), 10);
+            const baseDate = startInput.value ? new Date(startInput.value) : new Date();
+            baseDate.setMonth(baseDate.getMonth() + months);
+            endInput.value = baseDate.toISOString().split('T')[0];
+            updateEstimation();
+        });
+    });
+
+    updateEstimation();
+});
+</script>
+@endpush

@@ -1,453 +1,256 @@
-
 @extends('layouts.app')
 
-@section('content')
+@section('title', 'Beranda Penyewa')
 
-@include('penyewa.partials.navbar')
-
+@push('styles')
 <style>
-    :root {
-        --primary-blue: #2696D2;
-        --dark-blue: #2468B8;
-        --light-blue: #EAF4FF;
-        --text-dark: #263747;
+    .search-band {
+        background-color: var(--nk-surface);
+        border: 1px solid var(--nk-border);
+        border-radius: 12px;
+        padding: 1.75rem;
     }
 
-    body {
-        background: #fff;
-        color: var(--text-dark);
-    }
-    
-    .hero {
-        min-height: 390px;
-        display: flex;
-        align-items: center;
-        padding: 60px 6%;
-        background:
-            linear-gradient(90deg, rgba(200,244,255,.95), rgba(200,244,255,.35)),
-            url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1600')
-            center/cover;
-    }
-
-    .hero-content {
-        max-width: 520px;
-    }
-
-    .hero h1 {
-        color: #2468B8;
-        font-size: 42px;
-        font-weight: 800;
-        margin-bottom: 20px;
-        text-shadow: 1px 2px 3px rgba(0,0,0,.15);
-    }
-
-    .hero p {
-        font-size: 20px;
-        color: #172B3A;
-        margin-bottom: 25px;
-    }
-
-    .btn-primary-custom {
-        background: var(--dark-blue);
-        color: white;
-        border: none;
-        padding: 12px 25px;
-        border-radius: 8px;
-        text-decoration: none;
-        display: inline-block;
-        font-weight: 600;
-    }
-
-    .btn-primary-custom:hover {
-        background: var(--primary-blue);
-        color: white;
-    }
-
-    .section-title {
-        color: var(--dark-blue);
-        font-weight: 800;
-        margin-bottom: 30px;
-    }
-
-    .recommendation-section {
-        padding: 65px 6%;
+    .kos-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+        gap: 1.25rem;
     }
 
     .kos-card {
-        border: 1px solid #e5eaf0;
-        border-radius: 13px;
+        background-color: var(--nk-surface);
+        border: 1px solid var(--nk-border);
+        border-radius: 10px;
         overflow: hidden;
-        height: 100%;
-        transition: .25s;
-        background: white;
+        display: flex;
+        flex-direction: column;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
 
     .kos-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 22px rgba(0,0,0,.09);
+        border-color: var(--nk-blue);
+        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.05);
     }
 
-    .kos-image {
+    .kos-thumb-wrap {
+        position: relative;
+        height: 175px;
+        background-color: var(--nk-surface-subtle);
+        border-bottom: 1px solid var(--nk-border);
+        overflow: hidden;
+    }
+
+    .kos-thumb {
         width: 100%;
-        height: 190px;
+        height: 100%;
         object-fit: cover;
+        display: block;
+    }
+
+    .kos-type-tag {
+        position: absolute;
+        top: 0.75rem;
+        left: 0.75rem;
     }
 
     .kos-card-body {
-        padding: 17px;
+        padding: 1.15rem;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
     }
 
-    .kos-name {
-        color: var(--text-dark);
+    .kos-title {
+        font-size: 1rem;
         font-weight: 700;
-        font-size: 17px;
+        color: var(--nk-ink);
+        margin: 0 0 0.25rem 0;
+        letter-spacing: -0.01em;
     }
 
     .kos-address {
-        color: #777;
-        font-size: 13px;
-        margin: 8px 0;
+        font-size: 0.82rem;
+        color: var(--nk-muted);
+        margin-bottom: 0.85rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
-    .kos-type {
-        display: inline-block;
-        background: var(--light-blue);
-        color: var(--dark-blue);
-        border-radius: 20px;
-        padding: 5px 12px;
-        font-size: 12px;
-    }
-
-    .about-section {
-        padding: 55px 6%;
-    }
-
-    .about-description {
-        font-size: 16px;
-        line-height: 1.6;
-    }
-
-    .about-highlight {
-        background: var(--light-blue);
-        border-radius: 15px;
-        padding: 22px;
+    .kos-price-row {
+        margin-top: auto;
+        padding-top: 0.85rem;
+        border-top: 1px solid var(--nk-border);
         display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 0.5rem;
+    }
+
+    .quick-chip {
+        display: inline-flex;
         align-items: center;
-        gap: 22px;
-        margin-top: 20px;
+        padding: 0.35rem 0.75rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--nk-muted);
+        background-color: var(--nk-bg);
+        border: 1px solid var(--nk-border);
+        text-decoration: none;
+        transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
     }
 
-    .about-highlight i {
-        font-size: 48px;
-        color: var(--dark-blue);
-    }
-
-    .about-image {
-        width: 100%;
-        max-height: 300px;
-        object-fit: contain;
-    }
-
-    .values-section {
-        padding: 60px 6%;
-    }
-
-    .value-card {
-        border: 1px solid #cbdcf3;
-        border-radius: 15px;
-        padding: 28px 15px;
-        text-align: center;
-        height: 100%;
-        color: var(--dark-blue);
-    }
-
-    .value-card i {
-        font-size: 42px;
-        margin-bottom: 15px;
-    }
-
-    .value-card h6 {
-        font-size: 17px;
-        margin: 0;
-    }
-
-    .vision-section {
-        padding: 45px 6% 80px;
-    }
-
-    .vision-card {
-        border: 1px solid #cbdcf3;
-        border-radius: 15px;
-        padding: 30px;
-        height: 100%;
-        text-align: center;
-    }
-
-    .vision-card h4 {
-        color: var(--dark-blue);
-        font-weight: 800;
-        margin-bottom: 18px;
-    }
-
-    .vision-card p,
-    .vision-card li {
-        font-size: 16px;
-        line-height: 1.5;
-    }
-
-    .vision-card ol {
-        text-align: center;
-        padding-left: 25px;
-    }
-
-    .footer {
-        background: #2468B8;
-        color: white;
-        padding: 25px 6%;
-        text-align: center;
-    }
-
-    @media (max-width: 768px) {
-        .hero {
-            min-height: 350px;
-            padding: 40px 7%;
-        }
-
-        .hero h1 {
-            font-size: 32px;
-        }
-
-        .hero p {
-            font-size: 17px;
-        }
-
-        .navbar .nav-link {
-            margin-left: 0;
-        }
+    .quick-chip:hover {
+        border-color: var(--nk-blue);
+        color: var(--nk-blue);
+        background-color: var(--nk-blue-soft);
     }
 </style>
+@endpush
 
-<section class="hero">
-    <div class="hero-content">
-        <h1>Selamat Datang di ngeKosYuk</h1>
+@section('content')
+@include('penyewa.partials.navbar')
 
-        <p>
-            Kami hadir untuk memudahkan kamu menemukan kos
-            yang nyaman, aman, dan sesuai dengan kebutuhanmu.
-        </p>
+<div class="container py-4">
+    {{-- Interactive Search & Quick Navigation Band --}}
+    <div class="search-band mb-4">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-7">
+                <h1 class="nk-page-title mb-2">Halo, {{ Auth::user()->name }}. Cari kamar kos yang pas hari ini.</h1>
+                <p class="nk-page-subtitle mb-3">
+                    Bandingkan harga sewa bulanan, ketersediaan unit kamar, dan ajukan sewa langsung ke pemilik properti.
+                </p>
 
-        <a href="{{ url('/penyewa/cari-kos') }}"
-            class="btn-primary-custom">
-            Cari Kos Sekarang
+                <form action="{{ url('/penyewa/cari-kos') }}" method="GET" class="row g-2">
+                    <div class="col-sm-6">
+                        <label for="lokasi_cepat" class="visually-hidden">Cari nama atau lokasi kos</label>
+                        <input type="text"
+                               id="lokasi_cepat"
+                               name="lokasi"
+                               class="form-control"
+                               placeholder="Ketik nama daerah, jalan, atau nama kos...">
+                    </div>
+                    <div class="col-sm-3">
+                        <label for="tipe_cepat" class="visually-hidden">Tipe Kos</label>
+                        <select id="tipe_cepat" name="tipe_kos" class="form-select">
+                            <option value="">Semua Tipe</option>
+                            <option value="putra">Kos Putra</option>
+                            <option value="putri">Kos Putri</option>
+                            <option value="campur">Kos Campur</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="submit" class="btn-nk-primary w-100">
+                            Cari Kos
+                        </button>
+                    </div>
+                </form>
+
+                <div class="d-flex flex-wrap align-items-center gap-2 mt-3">
+                    <span class="small text-secondary">Filter cepat:</span>
+                    <a href="{{ url('/penyewa/cari-kos?tipe_kos=putra') }}" class="quick-chip">Kos Putra</a>
+                    <a href="{{ url('/penyewa/cari-kos?tipe_kos=putri') }}" class="quick-chip">Kos Putri</a>
+                    <a href="{{ url('/penyewa/cari-kos?tipe_kos=campur') }}" class="quick-chip">Kos Campur</a>
+                    <a href="{{ url('/penyewa/cari-kos?harga_max=1000000') }}" class="quick-chip">Di bawah Rp 1 Juta</a>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="nk-card p-3" style="background-color: var(--nk-bg);">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-semibold small">Akses Cepat Penyewa</span>
+                        <span class="nk-badge nk-badge-info">Akun Aktif</span>
+                    </div>
+                    <p class="small text-secondary mb-3">
+                        Pantau status persetujuan pengajuan sewa kamar Anda atau unggah bukti pembayaran tagihan bulanan.
+                    </p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{{ url('/penyewa/riwayat-sewa') }}" class="btn-nk-secondary py-1 px-3 small">
+                            Lihat Sewa Saya
+                        </a>
+                        <a href="{{ route('penyewa.pembayaran.index') }}" class="btn-nk-secondary py-1 px-3 small">
+                            Riwayat &amp; Tagihan Pembayaran
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Rekomendasi Kos Section --}}
+    <div class="d-flex flex-wrap justify-content-between align-items-end mb-3">
+        <div>
+            <h2 class="fw-bold mb-1" style="font-size: 1.25rem; letter-spacing: -0.02em;">Rekomendasi Kos</h2>
+            <p class="text-secondary small mb-0">Daftar kos terbaru yang memiliki kamar siap huni.</p>
+        </div>
+        <a href="{{ url('/penyewa/cari-kos') }}" class="small fw-semibold text-decoration-none" style="color: var(--nk-blue);">
+            Lihat semua kos &rarr;
         </a>
     </div>
-</section>
 
-<section class="recommendation-section">
-    <div class="container-fluid">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h2 class="section-title mb-2">Rekomendasi Kos</h2>
-                <p class="text-muted mb-0">
-                    Temukan tempat tinggal yang nyaman untukmu.
-                </p>
-            </div>
+    <div class="kos-grid">
+        @forelse($rekomendasiKos as $kos)
+            @php
+                $kamarTersedia = $kos->kamars->where('status', 'tersedia');
+                $hargaTermurah = $kamarTersedia->min('harga_per_bulan') ?? $kos->kamars->min('harga_per_bulan');
+                $fotoUrl = $kos->foto
+                    ? (str_starts_with($kos->foto, 'http') ? $kos->foto : asset('storage/' . $kos->foto))
+                    : 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80';
+            @endphp
+            <article class="kos-card">
+                <div class="kos-thumb-wrap">
+                    <img src="{{ $fotoUrl }}"
+                         alt="Foto {{ $kos->nama_kos }}"
+                         width="400"
+                         height="175"
+                         class="kos-thumb">
+                    <div class="kos-type-tag">
+                        @if($kos->tipe_kos === 'putra')
+                            <span class="nk-badge nk-badge-info">Kos Putra</span>
+                        @elseif($kos->tipe_kos === 'putri')
+                            <span class="nk-badge nk-badge-teal">Kos Putri</span>
+                        @else
+                            <span class="nk-badge nk-badge-neutral">Kos Campur</span>
+                        @endif
+                    </div>
+                </div>
 
-            <a href="{{ url('/penyewa/cari-kos') }}"
-                class="text-decoration-none fw-semibold">
-                Lihat Semua <i class="bi bi-arrow-right"></i>
-            </a>
-        </div>
+                <div class="kos-card-body">
+                    <h3 class="kos-title">{{ $kos->nama_kos }}</h3>
+                    <p class="kos-address">{{ $kos->alamat }}</p>
 
-        <div class="row g-4">
-            @forelse(($kos ?? $rekomendasiKos ?? collect()) as $item)
-                <div class="col-md-6 col-lg-3">
-                    <div class="kos-card">
-                        <img
-                            src="{{ $item->foto ? (str_starts_with($item->foto, 'http') ? $item->foto : asset('storage/' . $item->foto)) : 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=700' }}"
-                            class="kos-image"
-                            alt="{{ $item->nama_kos ?? 'Foto Kos' }}">
+                    <div class="d-flex align-items-center justify-content-between small text-secondary mb-2">
+                        <span>Ketersediaan</span>
+                        <strong class="text-dark font-mono">{{ $kamarTersedia->count() }} kamar kosong</strong>
+                    </div>
 
-                        <div class="kos-card-body">
-                            <span class="kos-type">
-                                {{ ucfirst($item->tipe_kos ?? 'Campur') }}
-                            </span>
-
-                            <h5 class="kos-name mt-3 text-truncate" title="{{ $item->nama_kos }}">
-                                {{ $item->nama_kos ?? 'Nama Kos' }}
-                            </h5>
-
-                            <p class="kos-address text-truncate">
-                                <i class="bi bi-geo-alt"></i>
-                                {{ $item->alamat ?? 'Alamat belum tersedia' }}
-                            </p>
-
-                            @php
-                                $minHarga = $item->kamars ? $item->kamars->min('harga_per_bulan') : null;
-                            @endphp
-                            @if($minHarga)
-                                <div class="fw-bold mb-3" style="color:var(--dark-blue); font-size:14px;">
-                                    Mulai Rp {{ number_format($minHarga, 0, ',', '.') }}<small class="text-muted fw-normal">/bln</small>
-                                </div>
+                    <div class="kos-price-row">
+                        <div>
+                            <span class="d-block text-secondary" style="font-size: 0.72rem;">Mulai dari</span>
+                            @if($hargaTermurah)
+                                <strong class="font-mono" style="color: var(--nk-blue); font-size: 0.98rem;">
+                                    Rp {{ number_format($hargaTermurah, 0, ',', '.') }}
+                                </strong>
+                                <span class="text-secondary" style="font-size: 0.75rem;">/ bln</span>
+                            @else
+                                <span class="text-secondary small">Belum ada kamar</span>
                             @endif
-
-                            <a href="{{ url('/penyewa/detail-kos/' . $item->id) }}"
-                                class="btn-primary-custom w-100 text-center">
-                                Lihat Detail
-                            </a>
                         </div>
+
+                        <a href="{{ url('/penyewa/detail-kos/' . $kos->id) }}" class="btn-nk-primary py-1 px-3 small">
+                            Lihat Detail
+                        </a>
                     </div>
                 </div>
-            @empty
-                <div class="col-12">
-                    <div class="text-center py-5 bg-light rounded-4">
-                        <i class="bi bi-house-door"
-                            style="font-size: 48px; color: #2696D2;"></i>
-
-                        <h5 class="mt-3 fw-bold">
-                            Belum Ada Kos Tersedia
-                        </h5>
-
-                        <p class="text-muted">
-                            Kos yang tersedia akan ditampilkan di sini.
-                        </p>
-                    </div>
-                </div>
-            @endforelse
-        </div>
+            </article>
+        @empty
+            <div class="nk-card p-5 text-center" style="grid-column: 1 / -1;">
+                <h3 class="h6 fw-bold mb-1">Belum Ada Kos Terdaftar</h3>
+                <p class="text-secondary small mb-0">Saat ini belum ada data properti kos yang tersedia.</p>
+            </div>
+        @endforelse
     </div>
-</section>
-
-
-<section class="about-section">
-    <div class="container-fluid">
-        <div class="row align-items-center g-4">
-            <div class="col-lg-8">
-                <h2 class="section-title mb-3">Siapa Kami?</h2>
-
-                <p class="about-description">
-                    ngeKosYuk adalah platform sistem informasi sewa kos
-                    yang dirancang untuk menghubungkan penyewa dengan
-                    pemilik kos secara mudah, aman, dan transparan.
-                    Kami percaya bahwa mencari tempat tinggal bukan
-                    sekadar mencari kamar, tetapi juga menemukan
-                    kenyamanan dan rasa aman untuk beraktivitas
-                    dan berkembang.
-                </p>
-
-                <div class="about-highlight">
-                    <i class="bi bi-house-heart-fill"></i>
-
-                    <div>
-                        <h5 class="fw-bold"
-                            style="color: #2468B8;">
-                            Lebih dari sekadar kos
-                        </h5>
-
-                        <p class="mb-0">
-                            ngeKosYuk bukan hanya tempat untuk mencari kos,
-                            tetapi juga solusi untuk kehidupan yang lebih baik.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 text-center">
-                <img
-                    src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=700"
-                    class="about-image"
-                    alt="Ilustrasi Rumah">
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="values-section">
-    <div class="container">
-        <h2 class="section-title text-center mb-5">
-            Nilai Kami
-        </h2>
-
-        <div class="row g-4 justify-content-center">
-            <div class="col-6 col-md-3">
-                <div class="value-card">
-                    <i class="bi bi-people-fill"></i>
-                    <h6>Peduli<br>Pengguna</h6>
-                </div>
-            </div>
-
-            <div class="col-6 col-md-3">
-                <div class="value-card">
-                    <i class="bi bi-shield-fill-check"></i>
-                    <h6>Aman &<br>Terpercaya</h6>
-                </div>
-            </div>
-
-            <div class="col-6 col-md-3">
-                <div class="value-card">
-                    <i class="bi bi-hand-thumbs-up-fill"></i>
-                    <h6>Mudah<br>Digunakan</h6>
-                </div>
-            </div>
-
-            <div class="col-6 col-md-3">
-                <div class="value-card">
-                    <i class="bi bi-eye-fill"></i>
-                    <h6>Transparan</h6>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="vision-section">
-    <div class="container">
-        <h2 class="section-title text-center mb-5">
-            Visi & Misi
-        </h2>
-
-        <div class="row g-4">
-            <div class="col-md-6">
-                <div class="vision-card">
-                    <h4>Visi</h4>
-
-                    <p>
-                        Menjadi platform sewa kos terpercaya dan terdepan
-                        di Indonesia yang memberikan kemudahan, kenyamanan,
-                        dan keamanan bagi seluruh penggunanya.
-                    </p>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="vision-card">
-                    <h4>Misi</h4>
-
-                    <ol>
-                        <li>
-                            Mempermudah pencarian kos dengan informasi
-                            yang lengkap dan akurat.
-                        </li>
-                        <li>
-                            Membangun koneksi yang baik antara penyewa
-                            dan pemilik kos.
-                        </li>
-                        <li>
-                            Memberikan pengalaman sewa kos yang aman,
-                            nyaman, dan transparan.
-                        </li>
-                    </ol>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-
-<footer class="footer">
-    <small>
-        &copy; {{ date('Y') }} ngeKosYuk. All Rights Reserved.
-    </small>
-</footer>
-
+</div>
 @endsection

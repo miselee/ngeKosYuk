@@ -1,311 +1,266 @@
-
 @extends('layouts.app')
 
-@section('title', 'Register - ngeKosYuk')
+@section('title', 'Daftar Akun')
 
-@section('content')
-
+@push('styles')
 <style>
-    body {
-        background: linear-gradient(120deg, #dff3fc, #edf5fa);
-        color: #263747;
-        font-family: Arial, sans-serif;
-    }
-
-    .auth-wrapper {
+    .auth-shell {
         min-height: 100vh;
-        display: flex;
-        align-items: center;
-        padding: 40px 0;
+        display: grid;
+        grid-template-columns: 1fr;
+        background-color: var(--nk-bg);
     }
 
-    .auth-container {
-        background: white;
-        border-radius: 18px;
-        overflow: hidden;
-        box-shadow: 0 15px 45px rgba(40, 105, 145, 0.12);
-    }
-
-    .auth-navbar {
-        padding: 16px 25px;
-        border-bottom: 1px solid #edf1f5;
-    }
-
-    .brand {
-        color: #238dc5;
-        font-size: 25px;
-        font-weight: 800;
-        text-decoration: none;
-    }
-
-    .auth-form-section {
-        padding: 35px 45px;
-        background: white;
-    }
-
-    .auth-image-section {
-        min-height: 750px;
-        position: relative;
-        background: #dceffc;
-    }
-
-    .auth-image {
-        width: 100%;
-        height: 100%;
-        min-height: 750px;
-        object-fit: cover;
-    }
-
-    .form-control, .form-select {
-        padding: 11px 13px;
-        border: 1px solid #e0e8ee;
-        border-radius: 9px;
-        font-size: 14px;
-    }
-
-    .form-control:focus, .form-select:focus {
-        border-color: #2696d2;
-        box-shadow: 0 0 0 3px rgba(38, 150, 210, .12);
-    }
-
-    .btn-blue {
-        background: #2696d2;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 12px;
-        font-weight: 600;
-    }
-
-    .btn-blue:hover {
-        background: #187db5;
-        color: white;
-    }
-
-    .auth-link {
-        color: #2696d2;
-        text-decoration: none;
-        font-weight: 600;
-    }
-
-    .auth-tabs {
-        display: flex;
-        gap: 30px;
-        border-bottom: 1px solid #e5eaf0;
-        margin-bottom: 22px;
-    }
-
-    .auth-tabs a {
-        color: #687786;
-        text-decoration: none;
-        padding-bottom: 12px;
-    }
-
-    .auth-tabs a.active {
-        color: #2696d2;
-        border-bottom: 2px solid #2696d2;
-        font-weight: 700;
-    }
-
-    .image-caption {
-        position: absolute;
-        bottom: 25px;
-        left: 25px;
-        right: 25px;
-        background: white;
-        border-radius: 12px;
-        padding: 18px;
-        box-shadow: 0 5px 20px rgba(0,0,0,.08);
-    }
-
-    @media (max-width: 991px) {
-        .auth-form-section {
-            padding: 35px 25px;
+    @media (min-width: 992px) {
+        .auth-shell {
+            grid-template-columns: 0.95fr 1.05fr;
         }
     }
+
+    .auth-visual {
+        position: relative;
+        background-color: var(--nk-ink);
+        color: #FFFFFF;
+        padding: 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        overflow: hidden;
+    }
+
+    .auth-visual-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.3;
+    }
+
+    .auth-visual-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .auth-form-pane {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2.5rem 1.5rem;
+        background-color: var(--nk-surface);
+    }
+
+    .auth-form-box {
+        width: 100%;
+        max-width: 440px;
+    }
+
+    .role-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+    }
+
+    .role-option {
+        position: relative;
+    }
+
+    .role-option input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .role-label {
+        display: block;
+        border: 1px solid var(--nk-border-strong);
+        border-radius: 8px;
+        padding: 0.75rem 0.9rem;
+        background-color: var(--nk-surface);
+        transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .role-option input[type="radio"]:checked + .role-label {
+        border-color: var(--nk-blue);
+        background-color: var(--nk-blue-soft);
+        box-shadow: inset 0 0 0 1px var(--nk-blue);
+    }
+
+    .role-option input[type="radio"]:focus-visible + .role-label {
+        outline: 2px solid var(--nk-blue);
+        outline-offset: 2px;
+    }
+
+    .role-title {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--nk-ink);
+        display: block;
+    }
+
+    .role-desc {
+        font-size: 0.75rem;
+        color: var(--nk-muted);
+        display: block;
+        margin-top: 0.15rem;
+    }
 </style>
+@endpush
 
-<div class="auth-wrapper">
-    <div class="container">
-        <div class="auth-container">
+@section('content')
+<div class="auth-shell">
+    <div class="auth-visual d-none d-lg-flex">
+        <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80"
+             alt="Suasana hunian kos nyaman"
+             width="1200"
+             height="900"
+             class="auth-visual-img">
 
-            <nav class="auth-navbar d-flex justify-content-between align-items-center">
-                <a href="/" class="brand">
-                    <i class="bi bi-house-door-fill"></i> ngeKosYuk
-                </a>
-            </nav>
+        <div class="auth-visual-content d-flex align-items-center gap-3">
+            <img src="{{ asset('images/logo/logo-ngekosyuk.jpeg') }}"
+                 alt="Logo ngeKosYuk"
+                 width="42"
+                 height="42"
+                 class="rounded-2 border border-secondary">
+            <span class="fw-bold fs-5">ngeKosYuk</span>
+        </div>
 
-            <div class="row g-0">
+        <div class="auth-visual-content my-auto py-5" style="max-width: 440px;">
+            <h1 class="fw-bold mb-3" style="font-size: 2rem; letter-spacing: -0.03em; line-height: 1.2;">
+                Mulai sewa atau kelola properti kos dalam hitungan menit.
+            </h1>
+            <p class="mb-0" style="color: #CBD5E1; font-size: 0.92rem;">
+                Pilih peran Anda saat mendaftar: cari kos sesuai anggaran sebagai Penyewa, atau kelola ketersediaan kamar sebagai Pemilik Kos.
+            </p>
+        </div>
 
-                <div class="col-lg-5">
-                    <div class="auth-form-section h-100">
+        <div class="auth-visual-content small" style="color: #CBD5E1;">
+            Data kontrak sewa dan histori transaksi tersimpan rapi dalam satu akun.
+        </div>
+    </div>
 
-                        <h2 class="fw-bold mb-2">Create Account</h2>
-
-                        <p class="text-secondary small mb-4">
-                            Daftar sekarang dan mulai temukan
-                            tempat tinggal yang nyaman.
-                        </p>
-
-                        <div class="auth-tabs">
-                            <a href="{{ url('/register') }}" class="active">
-                                Register
-                            </a>
-                            <a href="{{ url('/login') }}">
-                                Login
-                            </a>
-                        </div>
-
-                        @if ($errors->any())
-                            <div class="alert alert-danger small">
-                                <ul class="mb-0">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
-
-                        <form action="{{ url('/register') }}" method="POST">
-                            @csrf
-
-                            <div class="mb-3">
-                                <label class="form-label small fw-semibold">
-                                    Nama Lengkap
-                                </label>
-                                <input
-                                    type="text"
-                                    name="name"
-                                    class="form-control"
-                                    placeholder="Masukkan nama lengkap"
-                                    value="{{ old('name') }}"
-                                    required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label small fw-semibold">
-                                    Nomor HP
-                                </label>
-                                <input
-                                    type="text"
-                                    name="nomor_hp"
-                                    class="form-control"
-                                    placeholder="Contoh: 081234567890"
-                                    value="{{ old('nomor_hp') }}">
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label small fw-semibold">
-                                    Email
-                                </label>
-                                <input
-                                    type="email"
-                                    name="email"
-                                    class="form-control"
-                                    placeholder="Masukkan email"
-                                    value="{{ old('email') }}"
-                                    required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label small fw-semibold">
-                                    Daftar Sebagai
-                                </label>
-                                <select name="role" class="form-select" required>
-                                    <option value="" disabled
-                                        {{ old('role') ? '' : 'selected' }}>
-                                        Pilih jenis akun
-                                    </option>
-
-                                    <option value="pemilik"
-                                        {{ old('role') == 'pemilik' ? 'selected' : '' }}>
-                                        Pemilik Kos
-                                    </option>
-
-                                    <option value="penyewa"
-                                        {{ old('role') == 'penyewa' ? 'selected' : '' }}>
-                                        Penyewa
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label small fw-semibold">
-                                    Password
-                                </label>
-                                <input
-                                    type="password"
-                                    name="password"
-                                    class="form-control"
-                                    placeholder="Minimal 8 karakter"
-                                    required>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label small fw-semibold">
-                                    Konfirmasi Password
-                                </label>
-                                <input
-                                    type="password"
-                                    name="password_confirmation"
-                                    class="form-control"
-                                    placeholder="Masukkan ulang password"
-                                    required>
-                            </div>
-
-                            <button type="submit" class="btn btn-blue w-100">
-                                CREATE ACCOUNT
-                            </button>
-                        </form>
-
-                        <p class="text-center text-secondary small mt-4">
-                            Sudah punya akun?
-                            <a href="{{ url('/login') }}" class="auth-link">
-                                Sign In
-                            </a>
-                        </p>
-
-                        <div class="text-center">
-                            <a href="/" class="text-secondary small text-decoration-none">
-                                <i class="bi bi-arrow-left"></i>
-                                Kembali ke Beranda
-                            </a>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div class="col-lg-7 d-none d-lg-block">
-                    <div class="auth-image-section h-100">
-
-                        <img
-                            src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1200"
-                            alt="Hunian nyaman"
-                            class="auth-image">
-
-                        <div class="image-caption d-flex align-items-center gap-3">
-                            <div class="rounded-circle d-flex align-items-center justify-content-center"
-                                 style="width:55px;height:55px;background:#e0f2fc;flex-shrink:0;">
-                                <i class="bi bi-house-heart-fill fs-3"
-                                   style="color:#2696d2;"></i>
-                            </div>
-
-                            <div>
-                                <h6 class="fw-bold mb-1">
-                                    Mulai Perjalananmu Bersama ngeKosYuk
-                                </h6>
-                                <p class="text-secondary small mb-0">
-                                    Temukan kos yang sesuai dengan kebutuhanmu.
-                                </p>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
+    <div class="auth-form-pane">
+        <div class="auth-form-box">
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <img src="{{ asset('images/logo/logo-ngekosyuk.jpeg') }}"
+                     alt="Logo ngeKosYuk"
+                     width="34"
+                     height="34"
+                     class="nk-brand-logo">
+                <span class="fw-bold fs-5">ngeKosYuk</span>
             </div>
+
+            <h2 class="fw-bold mb-1" style="font-size: 1.45rem; letter-spacing: -0.025em;">Buat Akun Baru</h2>
+            <p class="text-secondary small mb-4">Lengkapi identitas singkat di bawah ini untuk mulai menggunakan ngeKosYuk.</p>
+
+            @if($errors->any())
+                <div class="alert alert-danger py-2 px-3 small mb-3" role="alert">
+                    <ul class="mb-0 ps-3">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form action="{{ url('/register') }}" method="POST">
+                @csrf
+
+                <div class="mb-3">
+                    <label class="form-label d-block">Daftar Sebagai</label>
+                    <div class="role-grid">
+                        <div class="role-option">
+                            <input type="radio"
+                                   name="role"
+                                   id="role_penyewa"
+                                   value="penyewa"
+                                   {{ old('role', 'penyewa') === 'penyewa' ? 'checked' : '' }}
+                                   required>
+                            <label for="role_penyewa" class="role-label">
+                                <span class="role-title">Penyewa Kos</span>
+                                <span class="role-desc">Cari &amp; ajukan sewa kamar</span>
+                            </label>
+                        </div>
+                        <div class="role-option">
+                            <input type="radio"
+                                   name="role"
+                                   id="role_pemilik"
+                                   value="pemilik"
+                                   {{ old('role') === 'pemilik' ? 'checked' : '' }}>
+                            <label for="role_pemilik" class="role-label">
+                                <span class="role-title">Pemilik Kos</span>
+                                <span class="role-desc">Kelola kamar &amp; tagihan</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="name" class="form-label">Nama Lengkap</label>
+                    <input type="text"
+                           id="name"
+                           name="name"
+                           class="form-control"
+                           placeholder="Contoh: Budi Santoso"
+                           value="{{ old('name') }}"
+                           required>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6">
+                        <label for="email" class="form-label">Alamat Email</label>
+                        <input type="email"
+                               id="email"
+                               name="email"
+                               class="form-control"
+                               placeholder="nama@email.com"
+                               value="{{ old('email') }}"
+                               required>
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="nomor_hp" class="form-label">Nomor WhatsApp / HP</label>
+                        <input type="text"
+                               id="nomor_hp"
+                               name="nomor_hp"
+                               class="form-control font-mono"
+                               placeholder="081234567890"
+                               value="{{ old('nomor_hp') }}">
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-sm-6">
+                        <label for="password" class="form-label">Kata Sandi</label>
+                        <input type="password"
+                               id="password"
+                               name="password"
+                               class="form-control"
+                               placeholder="Min. 6 karakter"
+                               required>
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="password_confirmation" class="form-label">Ulangi Kata Sandi</label>
+                        <input type="password"
+                               id="password_confirmation"
+                               name="password_confirmation"
+                               class="form-control"
+                               placeholder="Ketik ulang sandi"
+                               required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-nk-primary w-100 py-2 mb-3">
+                    Buat Akun
+                </button>
+            </form>
+
+            <p class="text-center text-secondary small mb-0">
+                Sudah memiliki akun?
+                <a href="{{ url('/login') }}" class="fw-semibold text-decoration-none" style="color: var(--nk-blue);">
+                    Masuk di sini
+                </a>
+            </p>
         </div>
     </div>
 </div>
-
 @endsection
