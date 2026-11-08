@@ -99,16 +99,22 @@ class PenyewaController extends Controller
     public function detailKos(int $kosId)
     {
         $kos = Kos::with([
-            'kamars',
+            'kamars' => function ($query) {
+                $query->where('status', 'tersedia');
+            },
             'pemilik',
             'user',
             'ulasans.penyewa',
         ])->findOrFail($kosId);
 
-        $kamarTersedia = $kos->kamars->where('status', 'tersedia');
+        $kamarTersedia = $kos->kamars;
         $rataRating = $kos->ulasans->avg('rating');
 
-        return view('penyewa.detail-kos', compact('kos', 'kamarTersedia', 'rataRating'));
+        return view('penyewa.detail-kos', compact(
+            'kos',
+            'kamarTersedia',
+            'rataRating'
+        ));
     }
 
     /**

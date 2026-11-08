@@ -6,10 +6,11 @@ use App\Http\Controllers\KelolaPembayaranController;
 use App\Http\Controllers\KelolaPenyewaanController;
 use App\Http\Controllers\PemilikController;
 use App\Http\Controllers\PenyewaController;
+use App\Http\Controllers\LandingController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/login');
+Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 // Login
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -60,11 +61,15 @@ Route::middleware(['auth', 'role:pemilik'])->prefix('pemilik')->name('pemilik.')
     Route::post('/kos/quick-store', [PemilikController::class, 'quickStoreKos'])->name('kos.quick-store');
 });
 
-// Penyewa Routes
+// Route publik untuk guest dan penyewa
+Route::get('/cari-kos', [PenyewaController::class, 'cariKos']) ->name('kos.cari');
+Route::get('/detail-kos/{kosId}', [PenyewaController::class, 'detailKos'])->name('kos.detail');
+Route::get('/penyewa/cari-kos', [PenyewaController::class, 'cariKos'])->name('penyewa.cari-kos');
+Route::get('/penyewa/detail-kos/{kosId}', [PenyewaController::class, 'detailKos'])->name('penyewa.detail-kos');
+
+// Penyewa Routes (wajib login)
 Route::middleware(['auth', 'role:penyewa'])->prefix('penyewa')->group(function () {
     Route::get('/dashboard', [PenyewaController::class, 'dashboard']);
-    Route::get('/cari-kos', [PenyewaController::class, 'cariKos']);
-    Route::get('/detail-kos/{kosId}', [PenyewaController::class, 'detailKos']);
 
     // Pengajuan Sewa
     Route::get('/pengajuan-sewa/{kamarId}', [PenyewaController::class, 'formPengajuanSewa']);
@@ -83,3 +88,4 @@ Route::middleware(['auth', 'role:penyewa'])->prefix('penyewa')->group(function (
     Route::get('/ulasan/{sewaId}', [PenyewaController::class, 'formUlasan']);
     Route::post('/ulasan', [PenyewaController::class, 'simpanUlasan']);
 });
+

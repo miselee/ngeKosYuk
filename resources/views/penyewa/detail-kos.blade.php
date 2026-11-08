@@ -38,7 +38,15 @@
 @endpush
 
 @section('content')
-@include('penyewa.partials.navbar')
+@auth
+    @if(Auth::user()->role === 'penyewa')
+        @include('penyewa.partials.navbar')
+    @else
+        @include('partials.navbar-public')
+    @endif
+@else
+    @include('partials.navbar-public')
+@endauth
 
 <div class="container py-4">
     <div class="mb-3">
