@@ -24,12 +24,22 @@ class KelolaPenyewaanController extends Controller
         $baseQuery = Sewa::whereIn('kos_id', $kosIds)
             ->with(['penyewa', 'kamar', 'kos', 'pembayarans']);
 
-        // Hitung total tiap status
-        $totalSewa = (clone $baseQuery)->count();
-        $totalPending = (clone $baseQuery)->where('status', 'pending')->count();
-        $totalDisetujui = (clone $baseQuery)->where('status', 'disetujui')->count();
-        $totalDitolak = (clone $baseQuery)->where('status', 'ditolak')->count();
-        $totalSelesai = (clone $baseQuery)->where('status', 'selesai')->count();
+        // Hitung total tiap status dalam satu query
+        $stats = Sewa::whereIn('kos_id', $kosIds)
+            ->selectRaw("
+                COUNT(*) as total,
+                COALESCE(SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END), 0) as pending,
+                COALESCE(SUM(CASE WHEN status = 'disetujui' THEN 1 ELSE 0 END), 0) as disetujui,
+                COALESCE(SUM(CASE WHEN status = 'ditolak' THEN 1 ELSE 0 END), 0) as ditolak,
+                COALESCE(SUM(CASE WHEN status = 'selesai' THEN 1 ELSE 0 END), 0) as selesai
+            ")
+            ->first();
+
+        $totalSewa = (int) ($stats->total ?? 0);
+        $totalPending = (int) ($stats->pending ?? 0);
+        $totalDisetujui = (int) ($stats->disetujui ?? 0);
+        $totalDitolak = (int) ($stats->ditolak ?? 0);
+        $totalSelesai = (int) ($stats->selesai ?? 0);
 
         // Query dengan filter
         $query = clone $baseQuery;

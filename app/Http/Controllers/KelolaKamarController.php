@@ -25,10 +25,18 @@ class KelolaKamarController extends Controller
 
         $baseQuery = Kamar::whereIn('kos_id', $kosIds)->with('kos');
 
-        // Ringkasan statistik keseluruhan kamar milik pemilik kos
-        $totalKamar = (clone $baseQuery)->count();
-        $totalTersedia = (clone $baseQuery)->where('status', 'tersedia')->count();
-        $totalTerisi = (clone $baseQuery)->where('status', 'terisi')->count();
+        // Ringkasan statistik keseluruhan kamar milik pemilik kos dalam satu query
+        $stats = Kamar::whereIn('kos_id', $kosIds)
+            ->selectRaw("
+                COUNT(*) as total,
+                COALESCE(SUM(CASE WHEN status = 'tersedia' THEN 1 ELSE 0 END), 0) as tersedia,
+                COALESCE(SUM(CASE WHEN status = 'terisi' THEN 1 ELSE 0 END), 0) as terisi
+            ")
+            ->first();
+
+        $totalKamar = (int) ($stats->total ?? 0);
+        $totalTersedia = (int) ($stats->tersedia ?? 0);
+        $totalTerisi = (int) ($stats->terisi ?? 0);
 
         // Query dengan filter untuk tampilan tabel
         $query = clone $baseQuery;

@@ -173,6 +173,9 @@
                         <a href="{{ route('penyewa.pembayaran.index') }}" class="btn-nk-secondary py-1 px-3 small">
                             Riwayat &amp; Tagihan Pembayaran
                         </a>
+                        <a href="{{ route('profile.edit') }}" class="btn-nk-secondary py-1 px-3 small">
+                            Edit Profil
+                        </a>
                     </div>
                 </div>
             </div>
@@ -186,7 +189,7 @@
             <p class="text-secondary small mb-0">Daftar kos terbaru yang memiliki kamar siap huni.</p>
         </div>
         <a href="{{ url('/penyewa/cari-kos') }}" class="small fw-semibold text-decoration-none" style="color: var(--nk-blue);">
-            Lihat semua kos &rarr;
+            Lihat semua kos
         </a>
     </div>
 

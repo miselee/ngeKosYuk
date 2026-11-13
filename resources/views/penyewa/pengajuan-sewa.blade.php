@@ -6,17 +6,14 @@
 @include('penyewa.partials.navbar')
 
 <div class="container py-4" style="max-width: 960px;">
-    <div class="mb-3">
-        <a href="{{ url('/penyewa/detail-kos/' . $kamar->kos_id) }}" class="small text-decoration-none fw-medium" style="color: var(--nk-muted);">
-            &larr; Kembali ke {{ $kamar->kos->nama_kos }}
-        </a>
-    </div>
-
     <div class="nk-page-header">
         <div>
             <h1 class="nk-page-title">Formulir Pengajuan Sewa</h1>
             <p class="nk-page-subtitle">Tentukan periode mulai dan selesai sewa untuk Kamar {{ $kamar->nomor_kamar }}.</p>
         </div>
+        <a href="{{ url('/penyewa/detail-kos/' . $kamar->kos_id) }}" class="btn-nk-secondary">
+            Kembali ke Detail Kos
+        </a>
     </div>
 
     @if(session('error'))

@@ -170,11 +170,21 @@ class PenyewaController extends Controller
             $query->where('user_id', $userId);
         })->with(['sewa.kamar.kos.pemilik']);
 
-        $totalTransaksi = (clone $baseQuery)->count();
-        $totalPending = (clone $baseQuery)->where('status', 'pending')->count();
-        $totalDiverifikasi = (clone $baseQuery)->where('status', 'diverifikasi')->count();
-        $totalDitolak = (clone $baseQuery)->where('status', 'ditolak')->count();
-        $totalNominalLunas = (clone $baseQuery)->where('status', 'diverifikasi')->sum('jumlah');
+        $stats = Pembayaran::whereHas('sewa', function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })->selectRaw("
+            COUNT(*) as total,
+            COALESCE(SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END), 0) as pending,
+            COALESCE(SUM(CASE WHEN status = 'diverifikasi' THEN 1 ELSE 0 END), 0) as diverifikasi,
+            COALESCE(SUM(CASE WHEN status = 'ditolak' THEN 1 ELSE 0 END), 0) as ditolak,
+            COALESCE(SUM(CASE WHEN status = 'diverifikasi' THEN jumlah ELSE 0 END), 0) as nominal
+        ")->first();
+
+        $totalTransaksi = (int) ($stats->total ?? 0);
+        $totalPending = (int) ($stats->pending ?? 0);
+        $totalDiverifikasi = (int) ($stats->diverifikasi ?? 0);
+        $totalDitolak = (int) ($stats->ditolak ?? 0);
+        $totalNominalLunas = (int) ($stats->nominal ?? 0);
 
         // Sewa aktif (disetujui) yang dimiliki penyewa untuk akses cepat pembayaran tagihan
         $sewaAktif = Sewa::with(['kamar.kos.pemilik', 'pembayarans'])

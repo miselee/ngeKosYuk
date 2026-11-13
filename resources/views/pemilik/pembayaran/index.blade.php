@@ -11,6 +11,14 @@
             <h1 class="nk-page-title">Konfirmasi Pembayaran</h1>
             <p class="nk-page-subtitle">Periksa bukti pembayaran masuk dari penyewa, verifikasi status lunas, dan cetak kwitansi resmi.</p>
         </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{{ route('pemilik.penyewaan.index') }}" class="btn-nk-secondary">
+                Daftar Penyewaan
+            </a>
+            <a href="{{ route('pemilik.dashboard') }}" class="btn-nk-secondary">
+                Ringkasan
+            </a>
+        </div>
     </div>
 
     @if(session('success'))
@@ -188,8 +196,8 @@
                                 </td>
                             </tr>
 
-                            {{-- Reject Payment Modal --}}
                             @if($bayar->status === 'pending')
+                            @push('modals')
                                 <div class="modal fade" id="modalTolakBayar{{ $bayar->id }}" tabindex="-1" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
                                         <form action="{{ route('pemilik.pembayaran.tolak', $bayar->id) }}" method="POST" class="modal-content">
@@ -219,6 +227,7 @@
                                         </form>
                                     </div>
                                 </div>
+                            @endpush
                             @endif
                         @endforeach
                     </tbody>

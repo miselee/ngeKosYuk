@@ -25,16 +25,20 @@
 @include('pemilik.partials.navbar')
 
 <div class="container py-4" style="max-width: 760px;">
-    <div class="mb-3">
-        <a href="{{ route('pemilik.kelola-kamar.index') }}" class="small text-decoration-none fw-medium" style="color: var(--nk-muted);">
-            &larr; Kembali ke Kelola Kamar
-        </a>
-    </div>
-
     <div class="nk-page-header">
         <div>
             <h1 class="nk-page-title">Edit Kamar {{ $kamar->nomor_kamar }}</h1>
             <p class="nk-page-subtitle">Perbarui informasi properti, harga sewa, fasilitas, atau status ketersediaan unit kamar.</p>
+        </div>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            @if($kamar->status === 'tersedia')
+                <span class="nk-badge nk-badge-success">Tersedia</span>
+            @else
+                <span class="nk-badge nk-badge-info">Terisi</span>
+            @endif
+            <a href="{{ route('pemilik.kelola-kamar.index') }}" class="btn-nk-secondary">
+                Kembali ke Kelola Kamar
+            </a>
         </div>
     </div>
 

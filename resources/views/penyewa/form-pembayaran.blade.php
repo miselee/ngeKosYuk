@@ -71,12 +71,6 @@
 @include('penyewa.partials.navbar')
 
 <div class="container py-4" style="max-width: 980px;">
-    <div class="mb-3">
-        <a href="{{ url('/penyewa/riwayat-sewa') }}" class="small text-decoration-none fw-medium" style="color: var(--nk-muted);">
-            &larr; Kembali ke Sewa Saya
-        </a>
-    </div>
-
     <div class="nk-page-header">
         <div>
             <h1 class="nk-page-title">Kirim Pembayaran Sewa</h1>
@@ -84,6 +78,9 @@
                 {{ $sewa->kamar->kos->nama_kos }} (Kamar #{{ $sewa->kamar->nomor_kamar }}) &middot; Periode {{ \Carbon\Carbon::parse($sewa->tanggal_mulai)->format('d M Y') }} s/d {{ \Carbon\Carbon::parse($sewa->tanggal_selesai)->format('d M Y') }}
             </p>
         </div>
+        <a href="{{ url('/penyewa/riwayat-sewa') }}" class="btn-nk-secondary">
+            Kembali ke Sewa Saya
+        </a>
     </div>
 
     @if(session('error'))

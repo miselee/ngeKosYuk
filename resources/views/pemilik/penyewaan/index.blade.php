@@ -11,6 +11,14 @@
             <h1 class="nk-page-title">Daftar Penyewaan Kos</h1>
             <p class="nk-page-subtitle">Kelola permohonan sewa kamar masuk, kontrak aktif penghuni, serta penyelesaian masa sewa.</p>
         </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{{ route('pemilik.kelola-kamar.index') }}" class="btn-nk-secondary">
+                Kelola Kamar
+            </a>
+            <a href="{{ route('pemilik.pembayaran.index') }}" class="btn-nk-primary">
+                Konfirmasi Pembayaran
+            </a>
+        </div>
     </div>
 
     @if(session('success'))
@@ -179,8 +187,8 @@
                                 </td>
                             </tr>
 
-                            {{-- Reject Modal --}}
                             @if($sewa->status === 'pending')
+                            @push('modals')
                                 <div class="modal fade" id="modalTolakSewa{{ $sewa->id }}" tabindex="-1" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
                                         <form action="{{ route('pemilik.penyewaan.tolak', $sewa->id) }}" method="POST" class="modal-content">
@@ -210,6 +218,7 @@
                                         </form>
                                     </div>
                                 </div>
+                            @endpush
                             @endif
                         @endforeach
                     </tbody>

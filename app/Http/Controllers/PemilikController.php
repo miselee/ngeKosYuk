@@ -23,11 +23,12 @@ class PemilikController extends Controller
 
         $daftarKos = $user->kos()->with('kamars')->get();
         $kosIds = $daftarKos->pluck('id');
+        $semuaKamar = $daftarKos->flatMap->kamars;
 
         $totalKos = $daftarKos->count();
-        $totalKamar = Kamar::whereIn('kos_id', $kosIds)->count();
-        $kamarTersedia = Kamar::whereIn('kos_id', $kosIds)->where('status', 'tersedia')->count();
-        $kamarTerisi = Kamar::whereIn('kos_id', $kosIds)->where('status', 'terisi')->count();
+        $totalKamar = $semuaKamar->count();
+        $kamarTersedia = $semuaKamar->where('status', 'tersedia')->count();
+        $kamarTerisi = $semuaKamar->where('status', 'terisi')->count();
 
         $kamarTerbaru = Kamar::whereIn('kos_id', $kosIds)
             ->with('kos')

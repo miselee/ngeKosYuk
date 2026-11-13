@@ -25,17 +25,14 @@
 @include('pemilik.partials.navbar')
 
 <div class="container py-4" style="max-width: 760px;">
-    <div class="mb-3">
-        <a href="{{ route('pemilik.kelola-kamar.index') }}" class="small text-decoration-none fw-medium" style="color: var(--nk-muted);">
-            &larr; Kembali ke Kelola Kamar
-        </a>
-    </div>
-
     <div class="nk-page-header">
         <div>
             <h1 class="nk-page-title">Tambah Kamar Kos Baru</h1>
             <p class="nk-page-subtitle">Daftarkan unit kamar baru beserta tarif bulanan dan rincian fasilitasnya.</p>
         </div>
+        <a href="{{ route('pemilik.kelola-kamar.index') }}" class="btn-nk-secondary">
+            Kembali ke Kelola Kamar
+        </a>
     </div>
 
     @if($errors->any())

@@ -25,12 +25,22 @@ class KelolaPembayaranController extends Controller
             $q->whereIn('kos_id', $kosIds);
         })->with(['sewa.penyewa', 'sewa.kamar', 'sewa.kos']);
 
-        // Ringkasan statistik
-        $totalPembayaran = (clone $baseQuery)->count();
-        $totalPending = (clone $baseQuery)->where('status', 'pending')->count();
-        $totalDiverifikasi = (clone $baseQuery)->where('status', 'diverifikasi')->count();
-        $totalDitolak = (clone $baseQuery)->where('status', 'ditolak')->count();
-        $totalNominalMasuk = (clone $baseQuery)->where('status', 'diverifikasi')->sum('jumlah');
+        // Ringkasan statistik dalam satu query
+        $stats = Pembayaran::whereHas('sewa', function ($q) use ($kosIds) {
+            $q->whereIn('kos_id', $kosIds);
+        })->selectRaw("
+            COUNT(*) as total,
+            COALESCE(SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END), 0) as pending,
+            COALESCE(SUM(CASE WHEN status = 'diverifikasi' THEN 1 ELSE 0 END), 0) as diverifikasi,
+            COALESCE(SUM(CASE WHEN status = 'ditolak' THEN 1 ELSE 0 END), 0) as ditolak,
+            COALESCE(SUM(CASE WHEN status = 'diverifikasi' THEN jumlah ELSE 0 END), 0) as nominal
+        ")->first();
+
+        $totalPembayaran = (int) ($stats->total ?? 0);
+        $totalPending = (int) ($stats->pending ?? 0);
+        $totalDiverifikasi = (int) ($stats->diverifikasi ?? 0);
+        $totalDitolak = (int) ($stats->ditolak ?? 0);
+        $totalNominalMasuk = (int) ($stats->nominal ?? 0);
 
         // Query dengan filter
         $query = clone $baseQuery;

@@ -51,7 +51,7 @@
 <div class="container py-4">
     <div class="mb-3">
         <a href="{{ url('/penyewa/cari-kos') }}" class="small text-decoration-none fw-medium" style="color: var(--nk-muted);">
-            &larr; Kembali ke Pencarian Kos
+            Kembali ke Pencarian Kos
         </a>
     </div>
 
