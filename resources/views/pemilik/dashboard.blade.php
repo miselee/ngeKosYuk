@@ -12,6 +12,9 @@
             <p class="nk-page-subtitle">Ringkasan operasional properti kos, tingkat hunian kamar, dan antrean verifikasi penyewa.</p>
         </div>
         <div class="d-flex flex-wrap gap-2">
+            <a href="{{ route('profile.edit') }}" class="btn-nk-secondary">
+                Edit Profil
+            </a>
             <button type="button" class="btn-nk-secondary" data-bs-toggle="modal" data-bs-target="#modalTambahKos">
                 + Tambah Properti Kos
             </button>
@@ -105,7 +108,7 @@
                 <div class="nk-card-header">
                     <h2 class="nk-card-title">Daftar Unit Kamar Terbaru</h2>
                     <a href="{{ route('pemilik.kelola-kamar.index') }}" class="small fw-semibold text-decoration-none" style="color: var(--nk-blue);">
-                        Kelola Semua Kamar &rarr;
+                        Kelola Semua Kamar
                     </a>
                 </div>
 

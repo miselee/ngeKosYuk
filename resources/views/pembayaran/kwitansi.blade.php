@@ -19,8 +19,15 @@
         }
         body {
             background-color: #FFFFFF !important;
+            color: #0F172A !important;
         }
         .invoice-sheet {
+            --nk-ink: #0F172A;
+            --nk-muted: #475569;
+            --nk-surface: #FFFFFF;
+            --nk-bg: #F8FAFC;
+            background-color: #FFFFFF !important;
+            color: #0F172A !important;
             border: 1px solid #000000;
             box-shadow: none;
             padding: 1.5rem;
@@ -31,15 +38,23 @@
 @endpush
 
 @section('content')
+@auth
+    @include(auth()->user()->role . '.partials.navbar')
+@endauth
+
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-3 no-print" style="max-width: 780px; margin: 0 auto;">
-        @if(auth()->user()->role === 'pemilik')
+        @if(auth()->user()->role === 'admin')
+            <a href="{{ route('admin.transaksi.index', ['tab' => 'pembayaran']) }}" class="btn-nk-secondary py-1 px-3 small">
+                Kembali ke Monitoring Transaksi
+            </a>
+        @elseif(auth()->user()->role === 'pemilik')
             <a href="{{ route('pemilik.pembayaran.index') }}" class="btn-nk-secondary py-1 px-3 small">
-                &larr; Kembali ke Pembayaran
+                Kembali ke Pembayaran
             </a>
         @else
             <a href="{{ route('penyewa.pembayaran.index') }}" class="btn-nk-secondary py-1 px-3 small">
-                &larr; Kembali ke Riwayat Pembayaran
+                Kembali ke Riwayat Pembayaran
             </a>
         @endif
 

@@ -263,7 +263,7 @@
             <a href="{{ route('kos.cari') }}"
                class="small fw-semibold text-decoration-none"
                style="color:var(--nk-blue);">
-                Cari kos lainnya &rarr;
+                Cari kos lainnya
             </a>
 
         </div>
@@ -400,7 +400,6 @@
         <a href="{{ url('/register') }}"
            class="btn-nk-primary px-4 py-2 text-decoration-none">
             Daftar Sekarang
-            <i class="bi bi-arrow-right ms-2"></i>
         </a>
 
     </section>

@@ -9,14 +9,29 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <script>
+        /* Apply saved theme before first paint to prevent light-to-dark flicker. */
+        (function () {
+            try {
+                var saved = localStorage.getItem('nk-theme');
+                var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                var theme = (saved === 'dark' || saved === 'light') ? saved : (prefersDark ? 'dark' : 'light');
+                document.documentElement.setAttribute('data-theme', theme);
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            } catch (e) {}
+        })();
+    </script>
     <style>
         :root {
             --nk-blue: #1E40AF;
             --nk-blue-hover: #1E3A8A;
+            --nk-blue-btn: #1E40AF;
+            --nk-blue-btn-hover: #1E3A8A;
             --nk-blue-soft: #EFF6FF;
             --nk-blue-border: #BFDBFE;
             --nk-teal: #0F766E;
+            --nk-teal-btn: #0F766E;
             --nk-teal-soft: #F0FDFA;
             --nk-teal-border: #99F6E4;
             --nk-bg: #F8FAFC;
@@ -34,6 +49,33 @@
             --nk-amber-ink: #92400E;
             --nk-rose-bg: #FFE4E6;
             --nk-rose-ink: #9F1239;
+        }
+
+        [data-theme="dark"] {
+            --nk-blue: #60A5FA;
+            --nk-blue-hover: #93C5FD;
+            --nk-blue-btn: #2563EB;
+            --nk-blue-btn-hover: #1D4ED8;
+            --nk-blue-soft: #172554;
+            --nk-blue-border: #1E3A8A;
+            --nk-teal: #2DD4BF;
+            --nk-teal-btn: #0F766E;
+            --nk-teal-soft: #042F2E;
+            --nk-teal-border: #115E59;
+            --nk-bg: #0B1120;
+            --nk-surface: #111827;
+            --nk-surface-subtle: #1E293B;
+            --nk-border: #1E293B;
+            --nk-border-strong: #334155;
+            --nk-ink: #F8FAFC;
+            --nk-muted: #94A3B8;
+
+            --nk-emerald-bg: #064E3B;
+            --nk-emerald-ink: #6EE7B7;
+            --nk-amber-bg: #451A03;
+            --nk-amber-ink: #FCD34D;
+            --nk-rose-bg: #4C0519;
+            --nk-rose-ink: #FDA4AF;
         }
 
         *, *::before, *::after {
@@ -119,16 +161,33 @@
             padding: 0;
         }
 
+        .nk-navbar-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: nowrap;
+        }
+
+        .nk-navbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
         .nk-nav-link {
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
-            padding: 0.5rem 0.85rem;
+            padding: 0.45rem 0.75rem;
             font-size: 0.875rem;
             font-weight: 500;
             color: var(--nk-muted);
             text-decoration: none;
             border-radius: 6px;
+            white-space: nowrap;
             transition: color 0.15s ease, background-color 0.15s ease;
             position: relative;
         }
@@ -142,6 +201,63 @@
             color: var(--nk-blue);
             background-color: var(--nk-blue-soft);
             font-weight: 600;
+        }
+
+        /* Navbar Account Pill */
+        .nk-user-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+            padding: 0.3rem 0.65rem 0.3rem 0.35rem;
+            border: 1px solid var(--nk-border);
+            border-radius: 8px;
+            background-color: var(--nk-bg);
+            text-decoration: none;
+            color: var(--nk-ink);
+            transition: border-color 0.15s ease, background-color 0.15s ease;
+        }
+
+        .nk-user-pill:hover, .nk-user-pill.active {
+            border-color: var(--nk-blue);
+            background-color: var(--nk-blue-soft);
+            color: var(--nk-ink);
+        }
+
+        .nk-user-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background-color: var(--nk-blue-soft);
+            color: var(--nk-blue);
+            border: 1px solid var(--nk-blue-border);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.72rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .nk-user-info {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.15;
+        }
+
+        .nk-user-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--nk-ink);
+            max-width: 140px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .nk-user-sub {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--nk-blue);
         }
 
         /* Structural Page Header */
@@ -247,9 +363,9 @@
 
         /* Buttons */
         .btn-nk-primary {
-            background-color: var(--nk-blue);
+            background-color: var(--nk-blue-btn);
             color: #FFFFFF;
-            border: 1px solid var(--nk-blue);
+            border: 1px solid var(--nk-blue-btn);
             font-weight: 600;
             font-size: 0.875rem;
             padding: 0.55rem 1.1rem;
@@ -263,8 +379,8 @@
         }
 
         .btn-nk-primary:hover, .btn-nk-primary:focus {
-            background-color: var(--nk-blue-hover);
-            border-color: var(--nk-blue-hover);
+            background-color: var(--nk-blue-btn-hover);
+            border-color: var(--nk-blue-btn-hover);
             color: #FFFFFF;
         }
 
@@ -291,9 +407,9 @@
         }
 
         .btn-nk-teal {
-            background-color: var(--nk-teal);
+            background-color: var(--nk-teal-btn);
             color: #FFFFFF;
-            border: 1px solid var(--nk-teal);
+            border: 1px solid var(--nk-teal-btn);
             font-weight: 600;
             font-size: 0.875rem;
             padding: 0.55rem 1.1rem;
@@ -309,6 +425,28 @@
         .btn-nk-teal:hover {
             opacity: 0.92;
             color: #FFFFFF;
+        }
+
+        .nk-theme-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.4rem 0.75rem;
+            border-radius: 8px;
+            border: 1px solid var(--nk-border-strong);
+            background-color: var(--nk-surface);
+            color: var(--nk-ink);
+            font-size: 0.8rem;
+            font-weight: 600;
+            line-height: 1.2;
+            white-space: nowrap;
+            transition: background-color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .nk-theme-toggle:hover {
+            background-color: var(--nk-surface-subtle);
+            border-color: var(--nk-blue);
         }
 
         /* Semantic Status Badges (Rectangular 6px radius, not floating pills) */
@@ -419,7 +557,7 @@
         }
 
         .nk-table tbody tr:hover {
-            background-color: #FAFBFD;
+            background-color: var(--nk-surface-subtle);
         }
 
         /* Form Controls */
@@ -484,8 +622,8 @@
         }
 
         .pagination .page-item.active .page-link {
-            background-color: var(--nk-blue);
-            border-color: var(--nk-blue);
+            background-color: var(--nk-blue-btn);
+            border-color: var(--nk-blue-btn);
             color: #FFFFFF;
         }
 
@@ -497,6 +635,25 @@
         nav[role="navigation"] p.small.text-muted {
             margin-bottom: 0;
             color: var(--nk-muted) !important;
+        }
+
+        /* Bootstrap utility harmonization for Light and Dark modes */
+        .text-secondary {
+            color: var(--nk-muted) !important;
+        }
+
+        .text-dark {
+            color: var(--nk-ink) !important;
+        }
+
+        .border, .border-top, .border-bottom, .border-start, .border-end {
+            border-color: var(--nk-border) !important;
+        }
+
+        .modal-content {
+            background-color: var(--nk-surface);
+            color: var(--nk-ink);
+            border-color: var(--nk-border-strong);
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -514,7 +671,64 @@
 
 @yield('content')
 
+{{-- Modals must live outside tables; a div inside tbody breaks Bootstrap's modal layout. --}}
+@stack('modals')
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    (function () {
+        function syncToggleButtons(theme) {
+            var isDark = theme === 'dark';
+            var buttons = document.querySelectorAll('[data-nk-theme-toggle]');
+            buttons.forEach(function (btn) {
+                btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+                btn.setAttribute('aria-label', isDark ? 'Aktifkan mode terang' : 'Aktifkan mode gelap');
+                var icon = btn.querySelector('[data-nk-theme-icon]');
+                var label = btn.querySelector('[data-nk-theme-label]');
+                if (icon) {
+                    icon.className = isDark ? 'bi bi-sun' : 'bi bi-moon-stars';
+                }
+                if (label) {
+                    label.textContent = isDark ? 'Terang' : 'Gelap';
+                }
+            });
+        }
+
+        function applyTheme(theme, persist) {
+            document.documentElement.setAttribute('data-theme', theme);
+            document.documentElement.setAttribute('data-bs-theme', theme);
+            if (persist) {
+                try {
+                    localStorage.setItem('nk-theme', theme);
+                } catch (e) {}
+            }
+            syncToggleButtons(theme);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var current = document.documentElement.getAttribute('data-theme') || 'light';
+            syncToggleButtons(current);
+
+            document.querySelectorAll('[data-nk-theme-toggle]').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var active = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+                    applyTheme(active === 'dark' ? 'light' : 'dark', true);
+                });
+            });
+
+            if (window.matchMedia) {
+                var media = window.matchMedia('(prefers-color-scheme: dark)');
+                media.addEventListener('change', function (event) {
+                    try {
+                        if (!localStorage.getItem('nk-theme')) {
+                            applyTheme(event.matches ? 'dark' : 'light', false);
+                        }
+                    } catch (e) {}
+                });
+            }
+        });
+    })();
+</script>
 @stack('scripts')
 </body>
 </html>

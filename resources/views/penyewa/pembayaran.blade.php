@@ -11,6 +11,14 @@
             <h1 class="nk-page-title">Riwayat Pembayaran</h1>
             <p class="nk-page-subtitle">Pantau tagihan sewa aktif, status verifikasi pembayaran, dan unduh bukti kwitansi resmi.</p>
         </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{{ url('/penyewa/riwayat-sewa') }}" class="btn-nk-secondary">
+                Lihat Sewa Saya
+            </a>
+            <a href="{{ url('/penyewa/cari-kos') }}" class="btn-nk-primary">
+                Cari Kos
+            </a>
+        </div>
     </div>
 
     @if(session('success'))

@@ -19,7 +19,7 @@
 
     .auth-visual {
         position: relative;
-        background-color: var(--nk-ink);
+        background-color: #0F172A;
         color: #FFFFFF;
         padding: 3rem;
         display: flex;
@@ -141,17 +141,34 @@
 
     <div class="auth-form-pane">
         <div class="auth-form-box">
-            <div class="d-flex align-items-center gap-2 mb-3">
-                <img src="{{ asset('images/logo/logo-ngekosyuk.jpeg') }}"
-                     alt="Logo ngeKosYuk"
-                     width="34"
-                     height="34"
-                     class="nk-brand-logo">
-                <span class="fw-bold fs-5">ngeKosYuk</span>
+            <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <img src="{{ asset('images/logo/logo-ngekosyuk.jpeg') }}"
+                         alt="Logo ngeKosYuk"
+                         width="34"
+                         height="34"
+                         class="nk-brand-logo">
+                    <span class="fw-bold fs-5">ngeKosYuk</span>
+                </div>
+                <button type="button"
+                        class="nk-theme-toggle"
+                        data-nk-theme-toggle
+                        aria-pressed="false"
+                        aria-label="Aktifkan mode gelap"
+                        title="Ganti mode gelap atau terang">
+                    <i class="bi bi-moon-stars" data-nk-theme-icon aria-hidden="true"></i>
+                    <span data-nk-theme-label>Gelap</span>
+                </button>
             </div>
 
             <h2 class="fw-bold mb-1" style="font-size: 1.45rem; letter-spacing: -0.025em;">Buat Akun Baru</h2>
             <p class="text-secondary small mb-4">Lengkapi identitas singkat di bawah ini untuk mulai menggunakan ngeKosYuk.</p>
+
+            @if(session('error'))
+                <div class="alert alert-warning py-2 px-3 small mb-3" role="alert">
+                    {{ session('error') }}
+                </div>
+            @endif
 
             @if($errors->any())
                 <div class="alert alert-danger py-2 px-3 small mb-3" role="alert">

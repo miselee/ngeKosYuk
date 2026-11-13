@@ -16,12 +16,8 @@ class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // === Buat Admin ===
         $admin = User::create([
             'name' => 'Admin Kos',
             'email' => 'admin@kos.com',
@@ -30,7 +26,6 @@ class DatabaseSeeder extends Seeder
             'nomor_hp' => '081234567890',
         ]);
 
-        // === Buat Pemilik ===
         $pemilik = User::create([
             'name' => 'Budi Pemilik',
             'email' => 'pemilik@kos.com',
@@ -39,7 +34,6 @@ class DatabaseSeeder extends Seeder
             'nomor_hp' => '081234567891',
         ]);
 
-        // === Buat Penyewa ===
         $penyewa = User::create([
             'name' => 'Andi Penyewa',
             'email' => 'penyewa@kos.com',
@@ -48,7 +42,6 @@ class DatabaseSeeder extends Seeder
             'nomor_hp' => '081234567892',
         ]);
 
-        // === Buat Kos (3-5 kos milik pemilik) ===
         $dataKos = [
             [
                 'nama_kos' => 'Kos Harmoni Sejahtera',
@@ -85,7 +78,6 @@ class DatabaseSeeder extends Seeder
             $kosModels[] = Kos::create(array_merge($kos, ['user_id' => $pemilik->id]));
         }
 
-        // === Buat Kamar (2-4 per kos) ===
         $fasilitasOptions = [
             'Kasur, Lemari, Meja Belajar, WiFi',
             'Kasur, Lemari, AC, Kamar Mandi Dalam',
@@ -110,7 +102,6 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // === Buat Sewa (2 sewa untuk penyewa) ===
         $kamarPertama = Kamar::first();
         $kamarKedua = Kamar::skip(3)->first();
 
@@ -124,7 +115,6 @@ class DatabaseSeeder extends Seeder
             'catatan' => 'Saya mahasiswa semester 5, butuh kos dekat kampus.',
         ]);
 
-        // Update status kamar menjadi terisi
         $kamarPertama->update(['status' => 'terisi']);
 
         $sewa2 = Sewa::create([
@@ -137,7 +127,6 @@ class DatabaseSeeder extends Seeder
             'catatan' => null,
         ]);
 
-        // === Buat Pembayaran ===
         Pembayaran::create([
             'sewa_id' => $sewa1->id,
             'jumlah' => $kamarPertama->harga_per_bulan,
@@ -168,7 +157,6 @@ class DatabaseSeeder extends Seeder
             'keterangan' => 'Pembayaran sewa yang sudah selesai.',
         ]);
 
-        // === Buat Ulasan ===
         Ulasan::create([
             'user_id' => $penyewa->id,
             'kos_id' => $kamarKedua->kos_id,
@@ -185,15 +173,11 @@ class DatabaseSeeder extends Seeder
             'komentar' => 'Fasilitas lengkap sesuai deskripsi. Lokasi strategis dekat kampus. WiFi kadang lambat.',
         ]);
 
-        // === Print Credentials ===
         $this->command->info('');
-        $this->command->info('===========================================');
-        $this->command->info('   KREDENSIAL PENGGUNA (Password: password)');
-        $this->command->info('===========================================');
+        $this->command->info("Kredensial Pengguna (Password: password)");
         $this->command->info("Admin   : {$admin->email}");
         $this->command->info("Pemilik : {$pemilik->email}");
         $this->command->info("Penyewa : {$penyewa->email}");
-        $this->command->info('===========================================');
         $this->command->info('');
     }
 }
