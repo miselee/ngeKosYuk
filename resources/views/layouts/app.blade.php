@@ -3,7 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>@yield('title', 'ngeKosYuk') - ngeKosYuk</title>
+    @auth
+    <script>
+        /* Re-validate session when restored from browser back-forward cache after logout. */
+        window.addEventListener('pageshow', function (event) {
+            var navEntries = window.performance && window.performance.getEntriesByType
+                ? window.performance.getEntriesByType('navigation')
+                : [];
+            var isBackForward = event.persisted || (navEntries.length > 0 && navEntries[0].type === 'back_forward');
+
+            if (!isBackForward) {
+                return;
+            }
+
+            document.documentElement.style.visibility = 'hidden';
+
+            fetch('{{ route('auth.session-check') }}', {
+                method: 'GET',
+                cache: 'no-store',
+                credentials: 'same-origin',
+                headers: { 'Accept': 'application/json' }
+            })
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error('Session invalid');
+                }
+                return response.json();
+            })
+            .then(function (data) {
+                if (!data || !data.authenticated) {
+                    window.location.replace('{{ url('/login') }}');
+                } else {
+                    document.documentElement.style.visibility = 'visible';
+                }
+            })
+            .catch(function () {
+                window.location.replace('{{ url('/login') }}');
+            });
+        });
+    </script>
+    @endauth
     <link rel="icon" type="image/jpeg" href="{{ asset('images/logo/logo-ngekosyuk.jpeg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

@@ -208,6 +208,13 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    if (window.history && window.history.pushState) {
+        window.history.pushState(null, '', window.location.href);
+        window.addEventListener('popstate', function () {
+            window.history.pushState(null, '', window.location.href);
+        });
+    }
+
     const pwInput = document.getElementById('password');
     const toggleBtn = document.getElementById('btnTogglePassword');
     if (pwInput && toggleBtn) {

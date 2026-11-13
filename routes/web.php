@@ -14,7 +14,9 @@ Route::redirect('/', '/login');
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth');
+Route::post('/logout', [AuthController::class, 'logout']);
+Route::get('/logout', fn () => redirect('/login'));
+Route::get('/auth/session-check', [AuthController::class, 'sessionCheck'])->name('auth.session-check');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profil', [ProfileController::class, 'edit'])->name('profile.edit');

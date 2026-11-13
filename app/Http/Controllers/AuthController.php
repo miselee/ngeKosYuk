@@ -5,12 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
     public function showLogin()
     {
+        if (Auth::check()) {
+            return redirect($this->redirectPathForRole(Auth::user()->role));
+        }
+
         return view('auth.login');
     }
 
@@ -24,15 +29,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            $role = Auth::user()->role;
-
-            if ($role == 'admin') {
-                return redirect('/admin/dashboard');
-            } elseif ($role == 'pemilik') {
-                return redirect('/pemilik/dashboard');
-            } else {
-                return redirect('/penyewa/dashboard');
-            }
+            return redirect($this->redirectPathForRole(Auth::user()->role));
         }
 
         return back()->withErrors([
@@ -42,16 +39,29 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::logout();
+        Auth::guard('web')->logout();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        if ($request->hasSession()) {
+            $request->session()->flush();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
 
-        return redirect('/')->with('success', 'Berhasil keluar dari akun.');
+        $sessionCookie = Cookie::forget(config('session.cookie'));
+        $recallerCookie = Cookie::forget(Auth::guard('web')->getRecallerName());
+
+        return redirect('/login')
+            ->with('success', 'Berhasil keluar dari akun.')
+            ->withCookie($sessionCookie)
+            ->withCookie($recallerCookie);
     }
 
     public function showRegister()
     {
+        if (Auth::check()) {
+            return redirect($this->redirectPathForRole(Auth::user()->role));
+        }
+
         return view('auth.register');
     }
 
@@ -76,10 +86,22 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        if ($user->role === 'pemilik') {
-            return redirect('/pemilik/dashboard');
-        }
+        return redirect($this->redirectPathForRole($user->role));
+    }
 
-        return redirect('/penyewa/dashboard');
+    public function sessionCheck(Request $request)
+    {
+        return response()->json([
+            'authenticated' => Auth::check(),
+        ]);
+    }
+
+    private function redirectPathForRole(string $role): string
+    {
+        return match ($role) {
+            'admin' => '/admin/dashboard',
+            'pemilik' => '/pemilik/dashboard',
+            default => '/penyewa/dashboard',
+        };
     }
 }
