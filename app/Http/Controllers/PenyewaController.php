@@ -9,9 +9,22 @@ use App\Models\Sewa;
 use App\Models\Ulasan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 
 class PenyewaController extends Controller
 {
+    /**
+     * Halaman publik utama untuk menjelajah kos sebelum masuk.
+     */
+    public function landing()
+    {
+        $rekomendasiKos = Schema::hasTable('kos')
+            ? Kos::with(['kamars', 'ulasans'])->latest()->paginate(6)
+            : collect();
+
+        return view('landing', compact('rekomendasiKos'));
+    }
+
     /**
      * Dashboard penyewa - menampilkan rekomendasi kos.
      */
@@ -36,12 +49,7 @@ class PenyewaController extends Controller
      */
     public function cariKos(Request $request)
     {
-        $query = Kos::with(['kamars' => function ($q) {
-            $q->where('status', 'tersedia');
-        }, 'ulasans'])
-            ->whereHas('kamars', function ($q) {
-                $q->where('status', 'tersedia');
-            });
+        $query = Kos::with(['kamars', 'ulasans']);
 
         // Filter berdasarkan lokasi (pencarian di nama_kos dan alamat)
         if ($request->filled('lokasi')) {
@@ -94,20 +102,21 @@ class PenyewaController extends Controller
     }
 
     /**
-     * Detail kos beserta kamar yang tersedia.
+     * Detail kos beserta daftar kamar.
      */
     public function detailKos(int $kosId)
     {
         $kos = Kos::with([
             'kamars' => function ($query) {
-                $query->where('status', 'tersedia');
+                $query->orderByRaw("CASE WHEN status = 'tersedia' THEN 0 ELSE 1 END")
+                    ->orderBy('nomor_kamar');
             },
             'pemilik',
             'user',
             'ulasans.penyewa',
         ])->findOrFail($kosId);
 
-        $kamarTersedia = $kos->kamars;
+        $kamarTersedia = $kos->kamars->where('status', 'tersedia');
         $rataRating = $kos->ulasans->avg('rating');
 
         return view('penyewa.detail-kos', compact(

@@ -38,19 +38,19 @@
 @endpush
 
 @section('content')
-@auth
-    @if(Auth::user()->role === 'penyewa')
-        @include('penyewa.partials.navbar')
-    @else
-        @include('partials.navbar-public')
-    @endif
+@php
+    $isPenyewa = Auth::check() && Auth::user()->role === 'penyewa';
+    $backCariUrl = $isPenyewa ? url('/penyewa/cari-kos') : route('kos.cari');
+@endphp
+@if($isPenyewa)
+    @include('penyewa.partials.navbar')
 @else
     @include('partials.navbar-public')
-@endauth
+@endif
 
 <div class="container py-4">
     <div class="mb-3">
-        <a href="{{ url('/penyewa/cari-kos') }}" class="small text-decoration-none fw-medium" style="color: var(--nk-muted);">
+        <a href="{{ $backCariUrl }}" class="small text-decoration-none fw-medium" style="color: var(--nk-muted);">
             Kembali ke Pencarian Kos
         </a>
     </div>
@@ -173,9 +173,24 @@
                             </div>
 
                             @if($kamar->status === 'tersedia')
-                                <a href="{{ url('/penyewa/pengajuan-sewa/' . $kamar->id) }}" class="btn-nk-primary py-1 px-3 small">
-                                    Ajukan Sewa
-                                </a>
+                                @auth
+                                    @if(Auth::user()->role === 'penyewa')
+                                        <a href="{{ url('/penyewa/pengajuan-sewa/' . $kamar->id) }}" class="btn-nk-primary py-1 px-3 small">
+                                            Ajukan Sewa
+                                        </a>
+                                    @else
+                                        <span class="small text-secondary">Masuk sebagai penyewa untuk memesan</span>
+                                    @endif
+                                @else
+                                    <div class="d-flex flex-wrap gap-2 justify-content-md-end">
+                                        <a href="{{ url('/penyewa/pengajuan-sewa/' . $kamar->id) }}" class="btn-nk-primary py-1 px-3 small">
+                                            Masuk untuk Pesan
+                                        </a>
+                                        <a href="{{ url('/register') }}" class="btn-nk-secondary py-1 px-3 small">
+                                            Daftar Akun
+                                        </a>
+                                    </div>
+                                @endauth
                             @else
                                 <button type="button" class="btn-nk-secondary py-1 px-3 small opacity-50" disabled>
                                     Tidak Tersedia

@@ -29,7 +29,14 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            return redirect($this->redirectPathForRole(Auth::user()->role));
+            $role = Auth::user()->role;
+            $target = $this->redirectPathForRole($role);
+
+            if ($role === 'penyewa') {
+                return redirect()->intended($target);
+            }
+
+            return redirect($target);
         }
 
         return back()->withErrors([
@@ -50,7 +57,7 @@ class AuthController extends Controller
         $sessionCookie = Cookie::forget(config('session.cookie'));
         $recallerCookie = Cookie::forget(Auth::guard('web')->getRecallerName());
 
-        return redirect('/login')
+        return redirect()->route('landing')
             ->with('success', 'Berhasil keluar dari akun.')
             ->withCookie($sessionCookie)
             ->withCookie($recallerCookie);
@@ -86,7 +93,13 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect($this->redirectPathForRole($user->role));
+        $target = $this->redirectPathForRole($user->role);
+
+        if ($user->role === 'penyewa') {
+            return redirect()->intended($target);
+        }
+
+        return redirect($target);
     }
 
     public function sessionCheck(Request $request)

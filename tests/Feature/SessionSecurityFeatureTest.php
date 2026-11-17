@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Kamar;
+use App\Models\Kos;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
@@ -47,7 +49,7 @@ class SessionSecurityFeatureTest extends TestCase
         $oldSessionId = session()->getId();
 
         $logoutResponse = $this->post('/logout');
-        $logoutResponse->assertRedirect('/login');
+        $logoutResponse->assertRedirect('/');
         $logoutResponse->assertCookieExpired(Auth::guard('web')->getRecallerName());
 
         $this->assertNotSame($oldSessionId, session()->getId());
@@ -55,6 +57,8 @@ class SessionSecurityFeatureTest extends TestCase
 
         $this->get('/profil')->assertRedirect('/login');
         $this->get('/penyewa/dashboard')->assertRedirect('/login');
+        $this->get('/')->assertStatus(200);
+        $this->get('/cari-kos')->assertStatus(200);
     }
 
     public function test_session_check_endpoint_reflects_auth_state(): void
@@ -69,11 +73,54 @@ class SessionSecurityFeatureTest extends TestCase
             ->assertStatus(200)
             ->assertJson(['authenticated' => true]);
 
-        $this->post('/logout')->assertRedirect('/login');
+        $this->post('/logout')->assertRedirect('/');
 
         $this->getJson(route('auth.session-check'))
             ->assertStatus(200)
             ->assertJson(['authenticated' => false]);
+    }
+
+    public function test_guest_can_browse_kos_and_details_before_logging_in_to_book(): void
+    {
+        $pemilik = User::factory()->create(['role' => 'pemilik']);
+        $kos = Kos::create([
+            'user_id' => $pemilik->id,
+            'nama_kos' => 'Kos Harmoni Publik',
+            'alamat' => 'Jl. Sudirman No. 88',
+            'tipe_kos' => 'campur',
+            'deskripsi' => 'Kos nyaman dekat pusat kota',
+        ]);
+        $kamar = Kamar::create([
+            'kos_id' => $kos->id,
+            'nomor_kamar' => 'H-01',
+            'harga_per_bulan' => 950000,
+            'fasilitas' => 'AC, WiFi',
+            'status' => 'tersedia',
+        ]);
+
+        $this->get('/')->assertStatus(200)->assertSee('Kos Harmoni Publik');
+        $this->get('/cari-kos')->assertStatus(200)->assertSee('Kos Harmoni Publik');
+        $this->get('/detail-kos/' . $kos->id)
+            ->assertStatus(200)
+            ->assertSee('Kos Harmoni Publik')
+            ->assertSee('Kamar H-01')
+            ->assertSee('Masuk untuk Pesan');
+
+        // Booking requires authentication and preserves the intended room URL.
+        $this->get('/penyewa/pengajuan-sewa/' . $kamar->id)->assertRedirect('/login');
+        $this->get('/login')->assertStatus(200)->assertSee('authCloudCanvas')->assertDontSee('btnToggleCloudMotion');
+        $this->get('/register')->assertStatus(200)->assertSee('authCloudCanvas')->assertDontSee('btnToggleCloudMotion');
+
+        $penyewa = User::factory()->create([
+            'role' => 'penyewa',
+            'email' => 'calon@kos.com',
+            'password' => bcrypt('rahasia123'),
+        ]);
+
+        $this->post('/login', [
+            'email' => 'calon@kos.com',
+            'password' => 'rahasia123',
+        ])->assertRedirect('/penyewa/pengajuan-sewa/' . $kamar->id);
     }
 
     public function test_authenticated_users_are_redirected_away_from_login_and_register(): void

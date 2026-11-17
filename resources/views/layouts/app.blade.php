@@ -62,11 +62,13 @@
                 var theme = (saved === 'dark' || saved === 'light') ? saved : (prefersDark ? 'dark' : 'light');
                 document.documentElement.setAttribute('data-theme', theme);
                 document.documentElement.setAttribute('data-bs-theme', theme);
+                document.documentElement.style.colorScheme = theme;
             } catch (e) {}
         })();
     </script>
     <style>
         :root {
+            color-scheme: light;
             --nk-blue: #1E40AF;
             --nk-blue-hover: #1E3A8A;
             --nk-blue-btn: #1E40AF;
@@ -95,6 +97,7 @@
         }
 
         [data-theme="dark"] {
+            color-scheme: dark;
             --nk-blue: #60A5FA;
             --nk-blue-hover: #93C5FD;
             --nk-blue-btn: #2563EB;
@@ -119,6 +122,15 @@
             --nk-amber-ink: #FCD34D;
             --nk-rose-bg: #4C0519;
             --nk-rose-ink: #FDA4AF;
+        }
+
+        /* Suppress component hover transitions during theme switches so all surfaces repaint in one frame. */
+        html.nk-theme-switching,
+        html.nk-theme-switching *,
+        html.nk-theme-switching *::before,
+        html.nk-theme-switching *::after {
+            transition: none !important;
+            animation: none !important;
         }
 
         *, *::before, *::after {
@@ -689,6 +701,15 @@
             color: var(--nk-ink) !important;
         }
 
+        .bg-white {
+            background-color: var(--nk-surface) !important;
+        }
+
+        .bg-light, .table-light {
+            background-color: var(--nk-surface-subtle) !important;
+            color: var(--nk-ink) !important;
+        }
+
         .border, .border-top, .border-bottom, .border-start, .border-end {
             border-color: var(--nk-border) !important;
         }
@@ -738,14 +759,29 @@
         }
 
         function applyTheme(theme, persist) {
-            document.documentElement.setAttribute('data-theme', theme);
-            document.documentElement.setAttribute('data-bs-theme', theme);
+            var root = document.documentElement;
+            root.classList.add('nk-theme-switching');
+            root.setAttribute('data-theme', theme);
+            root.setAttribute('data-bs-theme', theme);
+            root.style.colorScheme = theme;
+            syncToggleButtons(theme);
+
+            // Force synchronous style recalculation while transitions are disabled.
+            void root.offsetHeight;
+
+            if (window.requestAnimationFrame) {
+                window.requestAnimationFrame(function () {
+                    root.classList.remove('nk-theme-switching');
+                });
+            } else {
+                root.classList.remove('nk-theme-switching');
+            }
+
             if (persist) {
                 try {
                     localStorage.setItem('nk-theme', theme);
                 } catch (e) {}
             }
-            syncToggleButtons(theme);
         }
 
         document.addEventListener('DOMContentLoaded', function () {

@@ -10,7 +10,9 @@ use App\Http\Controllers\PenyewaController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/login');
+Route::get('/', [PenyewaController::class, 'landing'])->name('landing');
+Route::get('/cari-kos', [PenyewaController::class, 'cariKos'])->name('kos.cari');
+Route::get('/detail-kos/{kosId}', [PenyewaController::class, 'detailKos'])->name('kos.detail');
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);

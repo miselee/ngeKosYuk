@@ -171,11 +171,22 @@
 @include('partials.navbar-public')
 
 <div class="container py-4">
+    @if(session('success'))
+        <div class="alert alert-success py-2 px-3 small mb-3" role="alert">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-warning py-2 px-3 small mb-3" role="alert">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <section class="landing-hero" id="beranda">
         <div class="row align-items-center g-4">
 
             <div class="col-lg-7">
-                <span class="nk-badge nk-badge-info mb-3"> TEMUKAN KOS IMPIANMU </span>
                 <h1 class="mb-3"> Temukan Tempat Tinggal Nyaman, Semudah Itu. </h1>
                 <p class="mb-4">
                     Cari dan temukan kos sesuai kebutuhanmu.
@@ -186,14 +197,21 @@
                 <div class="d-flex flex-wrap gap-2">
                     <a href="#rekomendasi"
                        class="btn-nk-primary px-4 py-2 text-decoration-none">
-                        <i class="bi bi-search me-2"></i>
+                        <i class="bi bi-search me-2" aria-hidden="true"></i>
                         Mulai Cari Kos
                     </a>
 
-                    <a href="{{ url('/register') }}"
-                       class="btn-nk-secondary px-4 py-2 text-decoration-none">
-                        Buat Akun
-                    </a>
+                    @guest
+                        <a href="{{ url('/register') }}"
+                           class="btn-nk-secondary px-4 py-2 text-decoration-none">
+                            Buat Akun
+                        </a>
+                    @else
+                        <a href="{{ route('kos.cari') }}"
+                           class="btn-nk-secondary px-4 py-2 text-decoration-none">
+                            Jelajahi Semua Kos
+                        </a>
+                    @endguest
                 </div>
             </div>
 
@@ -201,6 +219,9 @@
                 <img
                     src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=85"
                     alt="Interior kamar kos nyaman"
+                    width="900"
+                    height="600"
+                    fetchpriority="high"
                     class="hero-image">
             </div>
 
@@ -289,6 +310,8 @@
                     <div class="kos-thumb-wrap">
                         <img src="{{ $fotoUrl }}"
                              alt="Foto {{ $kos->nama_kos }}"
+                             width="600"
+                             height="350"
                              class="kos-thumb">
 
                         <div class="position-absolute top-0 start-0 m-3">

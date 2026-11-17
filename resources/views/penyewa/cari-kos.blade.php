@@ -94,15 +94,15 @@
 @endpush
 
 @section('content')
-@auth
-    @if(Auth::user()->role === 'penyewa')
-        @include('penyewa.partials.navbar')
-    @else
-        @include('partials.navbar-public')
-    @endif
+@php
+    $isPenyewa = Auth::check() && Auth::user()->role === 'penyewa';
+    $cariAction = $isPenyewa ? url('/penyewa/cari-kos') : route('kos.cari');
+@endphp
+@if($isPenyewa)
+    @include('penyewa.partials.navbar')
 @else
     @include('partials.navbar-public')
-@endauth
+@endif
 
 <div class="container py-4">
     <div class="nk-page-header">
@@ -129,10 +129,10 @@
     <div class="row g-4">
         {{-- Left Filter Sidebar --}}
         <div class="col-lg-3">
-            <form id="filterKosForm" action="{{ url('/penyewa/cari-kos') }}" method="GET" class="filter-panel">
+            <form id="filterKosForm" action="{{ $cariAction }}" method="GET" class="filter-panel">
                 <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
                     <span class="fw-bold small">Saringan Pencarian</span>
-                    <a href="{{ url('/penyewa/cari-kos') }}" class="small text-decoration-none" style="color: var(--nk-muted); font-size: 0.78rem;">
+                    <a href="{{ $cariAction }}" class="small text-decoration-none" style="color: var(--nk-muted); font-size: 0.78rem;">
                         Reset
                     </a>
                 </div>
@@ -255,7 +255,7 @@
                                     @endif
                                 </div>
 
-                                <a href="{{ url('/penyewa/detail-kos/' . $itemKos->id) }}" class="btn-nk-primary py-1 px-3 small">
+                                <a href="{{ $isPenyewa ? url('/penyewa/detail-kos/' . $itemKos->id) : route('kos.detail', $itemKos->id) }}" class="btn-nk-primary py-1 px-3 small">
                                     Lihat Detail
                                 </a>
                             </div>
@@ -267,12 +267,18 @@
                         <p class="text-secondary small mb-3">
                             Coba longgarkan batas harga maksimum atau kata kunci lokasi pencarian Anda.
                         </p>
-                        <a href="{{ url('/penyewa/cari-kos') }}" class="btn-nk-secondary small">
+                        <a href="{{ $cariAction }}" class="btn-nk-secondary small">
                             Tampilkan Semua Kos
                         </a>
                     </div>
                 @endforelse
             </div>
+
+            @if(method_exists($daftarKos, 'hasPages') && $daftarKos->hasPages())
+                <div class="mt-4">
+                    {{ $daftarKos->links() }}
+                </div>
+            @endif
         </div>
     </div>
 </div>
