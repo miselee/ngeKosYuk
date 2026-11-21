@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KelolaKamarController;
 use App\Http\Controllers\KelolaPembayaranController;
 use App\Http\Controllers\KelolaPenyewaanController;
+use App\Http\Controllers\KelolaUlasanController;
 use App\Http\Controllers\PemilikController;
 use App\Http\Controllers\PenyewaController;
 use App\Http\Controllers\ProfileController;
@@ -65,6 +66,8 @@ Route::middleware(['auth', 'role:pemilik'])->prefix('pemilik')->name('pemilik.')
     Route::get('/pembayaran/{pembayaran}/kwitansi', [KelolaPembayaranController::class, 'kwitansi'])->name('pembayaran.kwitansi');
     Route::patch('/pembayaran/{pembayaran}/verifikasi', [KelolaPembayaranController::class, 'verifikasi'])->name('pembayaran.verifikasi');
     Route::patch('/pembayaran/{pembayaran}/tolak', [KelolaPembayaranController::class, 'tolak'])->name('pembayaran.tolak');
+
+    Route::get('/ulasan', [KelolaUlasanController::class, 'index'])->name('ulasan.index');
 
     Route::post('/kos/quick-store', [PemilikController::class, 'quickStoreKos'])->name('kos.quick-store');
 });
