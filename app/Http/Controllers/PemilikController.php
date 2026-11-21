@@ -6,6 +6,7 @@ use App\Models\Kamar;
 use App\Models\Kos;
 use App\Models\Pembayaran;
 use App\Models\Sewa;
+use App\Models\Ulasan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -47,6 +48,9 @@ class PemilikController extends Controller
             $q->whereIn('kos_id', $kosIds);
         })->where('status', 'pending')->count();
 
+        $totalUlasan = Ulasan::whereIn('kos_id', $kosIds)->count();
+        $rataRataRating = $totalUlasan > 0 ? round(Ulasan::whereIn('kos_id', $kosIds)->avg('rating'), 1) : 0;
+
         return view('pemilik.dashboard', compact(
             'daftarKos',
             'totalKos',
@@ -56,7 +60,9 @@ class PemilikController extends Controller
             'kamarTerbaru',
             'sewaPendingCount',
             'sewaTerbaru',
-            'pembayaranPendingCount'
+            'pembayaranPendingCount',
+            'totalUlasan',
+            'rataRataRating'
         ));
     }
 

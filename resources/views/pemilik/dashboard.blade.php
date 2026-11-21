@@ -12,6 +12,9 @@
             <p class="nk-page-subtitle">Ringkasan operasional properti kos, tingkat hunian kamar, dan antrean verifikasi penyewa.</p>
         </div>
         <div class="d-flex flex-wrap gap-2">
+            <a href="{{ route('pemilik.ulasan.index') }}" class="btn-nk-secondary">
+                Ulasan Kos
+            </a>
             <a href="{{ route('profile.edit') }}" class="btn-nk-secondary">
                 Edit Profil
             </a>
@@ -98,6 +101,21 @@
                 {{ $sewaPendingCount + $pembayaranPendingCount }}
             </div>
             <div class="nk-metric-sub">{{ $sewaPendingCount }} sewa &middot; {{ $pembayaranPendingCount }} pembayaran</div>
+        </div>
+        <div class="nk-metric-cell">
+            <span class="nk-metric-label">Rating Kos</span>
+            <div class="nk-metric-value" style="color: #b45309;">
+                @if($totalUlasan > 0)
+                    {{ $rataRataRating }} <span style="font-size: 16px;">★</span>
+                @else
+                    <span class="text-secondary" style="font-size: 20px;">-</span>
+                @endif
+            </div>
+            <div class="nk-metric-sub">
+                <a href="{{ route('pemilik.ulasan.index') }}" class="text-decoration-none text-secondary">
+                    {{ $totalUlasan }} ulasan &rarr;
+                </a>
+            </div>
         </div>
     </div>
 

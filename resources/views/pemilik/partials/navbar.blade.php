@@ -37,6 +37,12 @@
                             Pembayaran
                         </a>
                     </li>
+                    <li>
+                        <a class="nk-nav-link {{ request()->routeIs('pemilik.ulasan.*') ? 'active' : '' }}"
+                           href="{{ route('pemilik.ulasan.index') }}">
+                            Ulasan Kos
+                        </a>
+                    </li>
                 </ul>
             </div>
 
