@@ -83,11 +83,40 @@ class PenyewaFeatureTest extends TestCase
         $response->assertSee('Rp 750.000');
     }
 
+    public function test_penyewa_can_choose_a_specific_available_room(): void
+    {
+        $kamarLain = Kamar::create([
+            'kos_id' => $this->kos->id,
+            'nomor_kamar' => 'K-002',
+            'harga_per_bulan' => 900000,
+            'status' => 'tersedia',
+        ]);
+
+        $detailResponse = $this->actingAs($this->penyewa)->get('/penyewa/detail-kos/'.$this->kos->id);
+        $detailResponse->assertSee('Pilih Kamar Ini');
+
+        $formResponse = $this->actingAs($this->penyewa)->get('/penyewa/pengajuan-sewa/'.$kamarLain->id);
+        $formResponse->assertStatus(200);
+        $formResponse->assertSee('Kamar K-002 sudah dipilih.');
+        $formResponse->assertSee('name="kamar_id" value="'.$kamarLain->id.'"', false);
+
+        $applicationResponse = $this->actingAs($this->penyewa)->post('/penyewa/pengajuan-sewa', [
+            'kamar_id' => $kamarLain->id,
+            'tanggal_mulai' => now()->format('Y-m-d'),
+            'tanggal_selesai' => now()->addMonths(3)->format('Y-m-d'),
+        ]);
+
+        $applicationResponse->assertRedirect('/penyewa/riwayat-sewa');
+        $this->assertDatabaseHas('sewas', [
+            'kamar_id' => $kamarLain->id,
+            'kos_id' => $this->kos->id,
+        ]);
+    }
+
     public function test_penyewa_can_submit_sewa_application(): void
     {
         $response = $this->actingAs($this->penyewa)->post('/penyewa/pengajuan-sewa', [
             'kamar_id' => $this->kamar->id,
-            'kos_id' => $this->kos->id,
             'tanggal_mulai' => now()->format('Y-m-d'),
             'tanggal_selesai' => now()->addMonths(3)->format('Y-m-d'),
             'catatan' => 'Mohon persetujuannya.',
@@ -101,6 +130,43 @@ class PenyewaFeatureTest extends TestCase
             'status' => 'pending',
             'catatan' => 'Mohon persetujuannya.',
         ]);
+    }
+
+    public function test_sewa_uses_kos_belonging_to_selected_room(): void
+    {
+        $kosLain = Kos::create([
+            'user_id' => $this->pemilik->id,
+            'nama_kos' => 'Kos Mawar',
+            'alamat' => 'Jl. Melati No. 2',
+            'tipe_kos' => 'putri',
+        ]);
+
+        $response = $this->actingAs($this->penyewa)->post('/penyewa/pengajuan-sewa', [
+            'kamar_id' => $this->kamar->id,
+            'kos_id' => $kosLain->id,
+            'tanggal_mulai' => now()->format('Y-m-d'),
+            'tanggal_selesai' => now()->addMonths(3)->format('Y-m-d'),
+        ]);
+
+        $response->assertRedirect('/penyewa/riwayat-sewa');
+        $this->assertDatabaseHas('sewas', [
+            'kamar_id' => $this->kamar->id,
+            'kos_id' => $this->kos->id,
+        ]);
+    }
+
+    public function test_penyewa_cannot_apply_for_unavailable_room(): void
+    {
+        $this->kamar->update(['status' => 'terisi']);
+
+        $response = $this->actingAs($this->penyewa)->post('/penyewa/pengajuan-sewa', [
+            'kamar_id' => $this->kamar->id,
+            'tanggal_mulai' => now()->format('Y-m-d'),
+            'tanggal_selesai' => now()->addMonths(3)->format('Y-m-d'),
+        ]);
+
+        $response->assertNotFound();
+        $this->assertDatabaseMissing('sewas', ['kamar_id' => $this->kamar->id]);
     }
 
     public function test_penyewa_can_view_riwayat_sewa(): void

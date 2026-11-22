@@ -143,25 +143,24 @@ class PenyewaController extends Controller
     {
         $validated = $request->validate([
             'kamar_id' => 'required|exists:kamars,id',
-            'kos_id' => 'required|exists:kos,id',
             'tanggal_mulai' => 'required|date|after_or_equal:today',
             'tanggal_selesai' => 'required|date|after:tanggal_mulai',
             'catatan' => 'nullable|string|max:1000',
         ]);
 
         // Pastikan kamar masih tersedia
-        Kamar::where('id', $validated['kamar_id'])
+        $kamar = Kamar::where('id', $validated['kamar_id'])
             ->where('status', 'tersedia')
             ->firstOrFail();
 
         Sewa::create([
             'user_id' => Auth::id(),
-            'kamar_id' => $validated['kamar_id'],
-            'kos_id' => $validated['kos_id'],
+            'kamar_id' => $kamar->id,
+            'kos_id' => $kamar->kos_id,
             'tanggal_mulai' => $validated['tanggal_mulai'],
             'tanggal_selesai' => $validated['tanggal_selesai'],
             'status' => 'pending',
-            'catatan' => $validated['catatan'],
+            'catatan' => $validated['catatan'] ?? null,
         ]);
 
         return redirect(url('/penyewa/riwayat-sewa'))

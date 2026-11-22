@@ -133,7 +133,7 @@
         <div class="d-flex justify-content-between align-items-end mb-3">
             <div>
                 <h2 class="h5 fw-bold mb-0">Daftar Unit Kamar ({{ $kos->kamars->count() }})</h2>
-                <p class="small text-secondary mb-0">Pilih kamar berstatus tersedia untuk mengajukan kontrak sewa.</p>
+                <p class="small text-secondary mb-0">Pilih unit yang tersedia untuk melanjutkan pengajuan sewa.</p>
             </div>
         </div>
 
@@ -176,7 +176,7 @@
                                 @auth
                                     @if(Auth::user()->role === 'penyewa')
                                         <a href="{{ url('/penyewa/pengajuan-sewa/' . $kamar->id) }}" class="btn-nk-primary py-1 px-3 small">
-                                            Ajukan Sewa
+                                            Pilih Kamar Ini
                                         </a>
                                     @else
                                         <span class="small text-secondary">Masuk sebagai penyewa untuk memesan</span>
@@ -184,7 +184,7 @@
                                 @else
                                     <div class="d-flex flex-wrap gap-2 justify-content-md-end">
                                         <a href="{{ url('/penyewa/pengajuan-sewa/' . $kamar->id) }}" class="btn-nk-primary py-1 px-3 small">
-                                            Masuk untuk Pesan
+                                            Pilih Kamar Ini
                                         </a>
                                         <a href="{{ url('/register') }}" class="btn-nk-secondary py-1 px-3 small">
                                             Daftar Akun

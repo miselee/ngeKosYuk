@@ -9,7 +9,7 @@
     <div class="nk-page-header">
         <div>
             <h1 class="nk-page-title">Formulir Pengajuan Sewa</h1>
-            <p class="nk-page-subtitle">Tentukan periode mulai dan selesai sewa untuk Kamar {{ $kamar->nomor_kamar }}.</p>
+            <p class="nk-page-subtitle">Kamar {{ $kamar->nomor_kamar }} sudah dipilih. Tentukan periode sewa untuk mengajukan kamar ini.</p>
         </div>
         <a href="{{ url('/penyewa/detail-kos/' . $kamar->kos_id) }}" class="btn-nk-secondary">
             Kembali ke Detail Kos
@@ -38,9 +38,8 @@
             <form action="{{ url('/penyewa/pengajuan-sewa') }}" method="POST" class="nk-card p-4">
                 @csrf
                 <input type="hidden" name="kamar_id" value="{{ $kamar->id }}">
-                <input type="hidden" name="kos_id" value="{{ $kamar->kos_id }}">
 
-                <h2 class="nk-card-title mb-3">Periode Kontrak Sewa</h2>
+                <h2 class="nk-card-title mb-3">Periode Sewa Kamar {{ $kamar->nomor_kamar }}</h2>
 
                 <div class="row g-3 mb-3">
                     <div class="col-sm-6">
