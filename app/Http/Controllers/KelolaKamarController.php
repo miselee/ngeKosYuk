@@ -7,6 +7,7 @@ use App\Models\Kos;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -94,15 +95,47 @@ class KelolaKamarController extends Controller
                 Rule::exists('kos', 'id')->where('user_id', $user->id),
             ],
             'nomor_kamar' => ['required', 'string', 'max:50'],
+            'jumlah_kamar' => ['sometimes', 'integer', 'min:1', 'max:100'],
             'harga_per_bulan' => ['required', 'integer', 'min:10000'],
             'fasilitas' => ['nullable', 'string', 'max:1000'],
             'status' => ['required', 'in:tersedia,terisi'],
         ]);
 
-        $kamar = Kamar::create($validated);
+        $jumlahKamar = (int) ($validated['jumlah_kamar'] ?? 1);
+        unset($validated['jumlah_kamar']);
+
+        $nomorAwal = $validated['nomor_kamar'];
+        $nomorKamar = [];
+        for ($offset = 0; $offset < $jumlahKamar; $offset++) {
+            $nomorKamar[] = $this->nomorKamarBerurutan($nomorAwal, $offset);
+        }
+
+        $nomorDuplikat = Kamar::where('kos_id', $validated['kos_id'])
+            ->whereIn('nomor_kamar', $nomorKamar)
+            ->pluck('nomor_kamar')
+            ->all();
+
+        if ($nomorDuplikat) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'nomor_kamar' => 'Nomor kamar sudah digunakan: '.implode(', ', $nomorDuplikat).'. Gunakan nomor awal yang lain.',
+                ]);
+        }
+
+        DB::transaction(function () use ($validated, $nomorKamar) {
+            foreach ($nomorKamar as $nomor) {
+                Kamar::create(array_merge($validated, ['nomor_kamar' => $nomor]));
+            }
+        });
+
+        $nomorPertama = $nomorKamar[0];
+        $pesan = $jumlahKamar === 1
+            ? "Kamar {$nomorPertama} berhasil ditambahkan!"
+            : "{$jumlahKamar} kamar berhasil ditambahkan ({$nomorPertama} - ".end($nomorKamar).')!';
 
         return redirect()->route('pemilik.kelola-kamar.index')
-            ->with('success', "Kamar {$kamar->nomor_kamar} berhasil ditambahkan!");
+            ->with('success', $pesan);
     }
 
     /**
@@ -201,5 +234,20 @@ class KelolaKamarController extends Controller
             abort(403, 'Anda tidak memiliki hak akses untuk mengelola kamar ini.');
         }
     }
-}
 
+    /**
+     * Buat nomor kamar berurutan berdasarkan angka terakhir pada nomor awal.
+     */
+    private function nomorKamarBerurutan(string $nomorAwal, int $offset): string
+    {
+        if (preg_match('/^(.*?)(\d+)$/', $nomorAwal, $matches)) {
+            $prefix = $matches[1];
+            $angkaAwal = $matches[2];
+            $angkaBaru = (int) $angkaAwal + $offset;
+
+            return $prefix.str_pad((string) $angkaBaru, strlen($angkaAwal), '0', STR_PAD_LEFT);
+        }
+
+        return $offset === 0 ? $nomorAwal : $nomorAwal.'-'.$offset;
+    }
+}

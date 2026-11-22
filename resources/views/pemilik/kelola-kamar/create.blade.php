@@ -72,11 +72,28 @@
                        required>
             </div>
             <div class="col-sm-6">
+                <label for="jumlah_kamar" class="form-label">Jumlah Kamar</label>
+                <input type="number"
+                       id="jumlah_kamar"
+                       name="jumlah_kamar"
+                       class="form-control"
+                       min="1"
+                       max="100"
+                       value="{{ old('jumlah_kamar', 1) }}"
+                       required>
+                <div class="form-text">Lebih dari 1 akan membuat nomor kamar berurutan otomatis.</div>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <div class="row g-3">
+                <div class="col-sm-12">
                 <label for="status" class="form-label">Status Ketersediaan</label>
                 <select id="status" name="status" class="form-select" required>
                     <option value="tersedia" {{ old('status', 'tersedia') === 'tersedia' ? 'selected' : '' }}>Tersedia</option>
                     <option value="terisi" {{ old('status') === 'terisi' ? 'selected' : '' }}>Terisi</option>
                 </select>
+                </div>
             </div>
         </div>
 

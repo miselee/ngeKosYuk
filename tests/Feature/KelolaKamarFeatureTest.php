@@ -140,6 +140,25 @@ class KelolaKamarFeatureTest extends TestCase
         ]);
     }
 
+    public function test_pemilik_can_store_multiple_rooms_sequentially(): void
+    {
+        $payload = [
+            'kos_id' => $this->kosPemilik->id,
+            'nomor_kamar' => 'D-401',
+            'jumlah_kamar' => 3,
+            'harga_per_bulan' => 1000000,
+            'fasilitas' => 'AC, WiFi',
+            'status' => 'tersedia',
+        ];
+
+        $response = $this->actingAs($this->pemilik)->post(route('pemilik.kelola-kamar.store'), $payload);
+
+        $response->assertRedirect(route('pemilik.kelola-kamar.index'));
+        $this->assertDatabaseHas('kamars', ['kos_id' => $this->kosPemilik->id, 'nomor_kamar' => 'D-401']);
+        $this->assertDatabaseHas('kamars', ['kos_id' => $this->kosPemilik->id, 'nomor_kamar' => 'D-402']);
+        $this->assertDatabaseHas('kamars', ['kos_id' => $this->kosPemilik->id, 'nomor_kamar' => 'D-403']);
+    }
+
     public function test_pemilik_cannot_create_room_for_another_owners_kos(): void
     {
         $kosLain = Kos::create([
